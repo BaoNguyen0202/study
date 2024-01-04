@@ -8,9 +8,8 @@ export class BaseService<TRequest, TResponse> {
 
     constructor(
         endPoint: string,
-        configUrl: CONFIG_URL,
     ) {
-        this.URL = configUrl.API;
+        this.URL = CONFIG_URL.API;
         this.endPoint = endPoint;
     }
 

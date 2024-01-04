@@ -15,4 +15,6 @@ export class Common {
     filterByField = (arr: [], field: string, value: any) => {
         return _.filter(arr, (item) => item[field] === value) ?? null;
     }
+
+    getUserInfo = () => { }
 }
