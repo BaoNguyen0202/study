@@ -32,6 +32,9 @@ const HomeScreen = ({ navigation }: any) => {
                 <Button mode="contained" onPress={handleMinus} style={styles.button}>
                     Minus 10
                 </Button>
+                <Button mode="contained" onPress={() => navigation.navigate('Audio')} style={{ marginTop: 20 }}>
+                    Go Audio
+                </Button>
             </View>
         </LinearGradient>
     );
