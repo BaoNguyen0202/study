@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Card, Title, Paragraph, Button } from 'react-native-paper';
 import { Audio } from '../utils';
+import RNFS from 'react-native-fs';
 
 interface AudioState {
     audioStatus?: string;
     recordTime?: number;
     playTime?: number;
+    audioFilePath?: string;
 }
+
 const AudioScreen = () => {
     const [state, setState] = useState<AudioState>({});
 
@@ -21,7 +24,8 @@ const AudioScreen = () => {
 
     const handleStopRecording = async () => {
         try {
-            await Audio.stopRecording(setState);
+            const { audioFileURL } = await Audio.stopRecording(setState);
+            setState((prev) => ({ ...prev, audioFilePath: audioFileURL }));
         } catch (error) {
             console.error('Error stopping recording:', error);
         }
@@ -48,6 +52,20 @@ const AudioScreen = () => {
             await Audio.pausePlaying();
         } catch (error) {
             console.error('Error pausing playback:', error);
+        }
+    };
+
+    const handleReadRecording = async () => {
+        try {
+            if (!state.audioFilePath) {
+                console.warn('No recorded audio available.');
+                return;
+            }
+
+            const audioContent = await RNFS.readFile(state.audioFilePath, 'base64');
+            console.log('Audio Content Base64:', audioContent);
+        } catch (error) {
+            console.error('Error reading recording:', error);
         }
     };
 
@@ -90,6 +108,9 @@ const AudioScreen = () => {
                     </Button>
                     <Button mode="contained" style={{ marginBottom: 8 }} onPress={handlePausePlaying}>
                         Pause Playing
+                    </Button>
+                    <Button mode="contained" style={{ marginBottom: 8 }} onPress={handleReadRecording}>
+                        Read Recording
                     </Button>
                 </Card.Content>
             </Card>

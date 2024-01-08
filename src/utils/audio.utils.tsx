@@ -1,5 +1,8 @@
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
-
+interface RecordingResult {
+    audioFileURL: string;
+    // Các thuộc tính khác nếu cần thiết
+}
 const audioRecorderPlayer = new AudioRecorderPlayer();
 
 // Hàm bắt đầu ghi âm
@@ -19,7 +22,7 @@ const startRecording = async (setStateCallback: any) => {
 };
 
 // Hàm dừng ghi âm
-const stopRecording = async (setStateCallback: any) => {
+const stopRecording = async (setStateCallback: any): Promise<RecordingResult> => {
     try {
         const result = await audioRecorderPlayer.stopRecorder();
         audioRecorderPlayer.removeRecordBackListener();
@@ -27,8 +30,12 @@ const stopRecording = async (setStateCallback: any) => {
             recordSecs: 0,
         });
         console.log(result);
+
+        // Trả về thông tin ghi âm, bao gồm audioFileURL
+        return { audioFileURL: result };
     } catch (error) {
         console.error(error);
+        throw error;
     }
 };
 
