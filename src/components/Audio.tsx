@@ -1,111 +1,99 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import { Button, Card, Divider, Title } from 'react-native-paper';
-import AudioRecorderPlayer, {
-    AVEncoderAudioQualityIOSType,
-    AVEncodingOption,
-    AudioEncoderAndroidType,
-    AudioSet,
-    AudioSourceAndroidType,
-} from 'react-native-audio-recorder-player';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { Card, Title, Paragraph, Button } from 'react-native-paper';
+import { Audio } from '../utils';
 
-const AudioScreen = ({ navigation }: any) => {
-    const [recordSecs, setRecordSecs] = useState(0);
-    const [recordTime, setRecordTime] = useState('00:00:00');
-    const [currentPositionSec, setCurrentPositionSec] = useState(0);
-    const [currentDurationSec, setCurrentDurationSec] = useState(0);
-    const [playTime, setPlayTime] = useState('00:00:00');
-    const [duration, setDuration] = useState('00:00:00');
+interface AudioState {
+    audioStatus?: string;
+    recordTime?: number;
+    playTime?: number;
+}
+const AudioScreen = () => {
+    const [state, setState] = useState<AudioState>({});
 
-    const audioRecorderPlayer = new AudioRecorderPlayer();
-    audioRecorderPlayer.setSubscriptionDuration(0.09);
-
-    const onStartRecord = async () => {
-        const path = 'hello.m4a';
-        const audioSet: AudioSet = {
-            AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
-            AudioSourceAndroid: AudioSourceAndroidType.MIC,
-            AVEncoderAudioQualityKeyIOS: AVEncoderAudioQualityIOSType.high,
-            AVNumberOfChannelsKeyIOS: 2,
-            AVFormatIDKeyIOS: AVEncodingOption.aac,
-        };
-
-        const uri = await audioRecorderPlayer.startRecorder(path, audioSet);
-        audioRecorderPlayer.addRecordBackListener((e) => {
-            setRecordSecs(e.currentPosition);
-            setRecordTime(audioRecorderPlayer.mmssss(Math.floor(e.currentPosition)));
-        });
-        console.log(`bat dau ghi am: ${uri}`);
+    const handleStartRecording = async () => {
+        try {
+            await Audio.startRecording(setState);
+        } catch (error) {
+            console.error('Error starting recording:', error);
+        }
     };
 
-    const onStopRecord = async () => {
-        const result = await audioRecorderPlayer.stopRecorder();
-        audioRecorderPlayer.removeRecordBackListener();
-        setRecordSecs(0);
-        console.log('da dung ghi am ', result);
+    const handleStopRecording = async () => {
+        try {
+            await Audio.stopRecording(setState);
+        } catch (error) {
+            console.error('Error stopping recording:', error);
+        }
     };
 
-    const onStartPlay = async () => {
-        const path = 'hello.m4a';
-        const msg = await audioRecorderPlayer.startPlayer(path);
-        audioRecorderPlayer.setVolume(1.0);
-        console.log(msg);
-        audioRecorderPlayer.addPlayBackListener((e) => {
-            if (e.currentPosition === e.duration) {
-                console.log('bat dau chay ');
-                audioRecorderPlayer.stopPlayer();
-            }
-            setCurrentPositionSec(e.currentPosition);
-            setCurrentDurationSec(e.duration);
-            setPlayTime(audioRecorderPlayer.mmssss(Math.floor(e.currentPosition)));
-            setDuration(audioRecorderPlayer.mmssss(Math.floor(e.duration)));
-        });
+    const handleStartPlaying = async () => {
+        try {
+            await Audio.startPlaying(setState);
+        } catch (error) {
+            console.error('Error starting playback:', error);
+        }
     };
 
-    const onPausePlay = async () => {
-        await audioRecorderPlayer.pausePlayer();
+    const handleStopPlaying = async () => {
+        try {
+            await Audio.stopPlaying();
+        } catch (error) {
+            console.error('Error stopping playback:', error);
+        }
     };
 
-    const onStopPlay = () => {
-        console.log('dung ghi am ');
-        audioRecorderPlayer.stopPlayer();
-        audioRecorderPlayer.removePlayBackListener();
+    const handlePausePlaying = async () => {
+        try {
+            await Audio.pausePlaying();
+        } catch (error) {
+            console.error('Error pausing playback:', error);
+        }
     };
 
     return (
-        <LinearGradient colors={['#3498db', '#1abc9c']} style={{ flex: 1 }}>
-            <Card
-                style={{
-                    flex: 1,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    alignContent: 'center',
-                    alignSelf: 'center',
-                }}
-            >
-                <Title>{recordTime}</Title>
-                <Button mode="contained" icon="record" onPress={onStartRecord}>
-                    RECORD
-                </Button>
-                <Button icon="stop" mode="outlined" onPress={onStopRecord}>
-                    STOP
-                </Button>
-                <Divider />
-                <Title>
-                    {playTime} / {duration}
-                </Title>
-                <Button mode="contained" icon="play" onPress={onStartPlay}>
-                    PLAY
-                </Button>
-                <Button icon="pause" mode="contained" onPress={onPausePlay}>
-                    PAUSE
-                </Button>
-                <Button icon="stop" mode="outlined" onPress={onStopPlay}>
-                    STOP
-                </Button>
+        <View>
+            <Card>
+                <Card.Content>
+                    <Title>Audio Status</Title>
+                    <Paragraph>{state && state.audioStatus}</Paragraph>
+                </Card.Content>
             </Card>
-        </LinearGradient>
+
+            <Card>
+                <Card.Content>
+                    <Title>Recording Time</Title>
+                    <Paragraph>{state && state.recordTime}</Paragraph>
+                </Card.Content>
+            </Card>
+
+            <Card>
+                <Card.Content>
+                    <Title>Playback Time</Title>
+                    <Paragraph>{state && state.playTime}</Paragraph>
+                </Card.Content>
+            </Card>
+
+            <Card>
+                <Card.Content>
+                    <Button mode="contained" style={{ marginBottom: 8 }} onPress={handleStartRecording}>
+                        Start Recording
+                    </Button>
+                    <Button mode="contained" style={{ marginBottom: 8 }} onPress={handleStopRecording}>
+                        Stop Recording
+                    </Button>
+                    <Button mode="contained" style={{ marginBottom: 8 }} onPress={handleStartPlaying}>
+                        Start Playing
+                    </Button>
+                    <Button mode="contained" style={{ marginBottom: 8 }} onPress={handleStopPlaying}>
+                        Stop Playing
+                    </Button>
+                    <Button mode="contained" style={{ marginBottom: 8 }} onPress={handlePausePlaying}>
+                        Pause Playing
+                    </Button>
+                </Card.Content>
+            </Card>
+        </View>
     );
 };
 
