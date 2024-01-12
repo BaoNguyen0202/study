@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import { CONFIG_URL } from '../config/configuration';
+import { ResponseAPI } from '../model/response-api';
 
 export class BaseService<TRequest, TResponse> {
 

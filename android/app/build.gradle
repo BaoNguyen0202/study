@@ -77,10 +77,12 @@ android {
     namespace "com.study_kids"
     defaultConfig {
         applicationId "com.study_kids"
-        minSdkVersion rootProject.ext.minSdkVersion
+        // minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        minSdkVersion 24
+
     }
     signingConfigs {
         debug {

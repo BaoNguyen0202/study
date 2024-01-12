@@ -1,4 +1,4 @@
-interface PageInfo {
+export class PageInfo {
     pageSize?: number;
     pageIndex?: number;
     totalPage?: number;

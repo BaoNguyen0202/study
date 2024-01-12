@@ -1,18 +1,54 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Alert, Platform, Image } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import { TextInput, Button, Text, Provider as PaperProvider } from 'react-native-paper';
+import { ImageAssets } from '../../assets';
+import { Common } from '../../utils';
+import { useMMKVString } from 'react-native-mmkv';
+import axios from 'axios';
+import { BaseService } from '../../service/base-service';
+import { UserAccountEntity, UserAccountLoginEntity } from '../../model/user-account-entity';
+import { APP_CONSTANT, SCREEN_CONSTANT } from '../../config/configuration';
+import { ResponseAPI } from '../../model/response-api';
 
 const LoginScreen = ({ navigation }: any) => {
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
-
+    const [fcmToken] = useMMKVString('FCM_TOKEN');
+    const [userNameStore, setUserNameStore] = useMMKVString(APP_CONSTANT.userNameStore);
+    const [passwordStore, setPasswordStore] = useMMKVString(APP_CONSTANT.passwordStore);
     const [secureTextEntry, setSecureTextEntry] = useState(true);
-    const handleLogin = () => {
-        navigation.navigate('Home');
+    const userService = new BaseService<UserAccountLoginEntity, UserAccountEntity>('UserAccount/Login');
+    
+    const handleLogin = async () => {
+        try {
+            const request: UserAccountLoginEntity = {
+                userName: userName,
+                password: password
+            }
+            const response = await userService.postAsync(request);
+            if (response?.data.status === '200') {
+                const result = response.data.data;
+                Common.storage.set('api_key', );
+                Common.storage.set('api_secret', result?.token);
+                setUserNameStore(result?.userName);
+                setPasswordStore(result?.hashpassword);
+
+                await Common.dismissKeyboard(() => {
+                    navigation.navigate(SCREEN_CONSTANT.HOME);
+                });
+            } else {
+                console.error('Login failed:', response?.data);
+                Alert.alert('Login Failed', 'Invalid username or password.');
+            }
+        } catch (error) {
+            console.error('Error during login:', error);
+            Alert.alert('Error', 'An error occurred during login. Please try again later.');
+        }
     };
     return (
-        <LinearGradient colors={['#3498db', '#1abc9c']} style={styles.linearGradient}>
+        <View style={styles.headerContainer}>
+            {/* <Image source={ImageAssets.InitLogo} style={styles.logo} /> */}
+
             <View style={styles.container}>
                 <TextInput label="Name" value={userName} onChangeText={setUserName} style={styles.input} />
                 <TextInput
@@ -28,12 +64,18 @@ const LoginScreen = ({ navigation }: any) => {
                         />
                     }
                 />
-                <Button mode="contained" onPress={handleLogin} style={styles.button}>
+                <Button mode="contained-tonal" icon={'camera'} onPress={handleLogin} style={styles.button}>
                     Log In
                 </Button>
+                <Text style={styles.text}>
+                    No account yet?{' '}
+                    <Text onPress={() => {}} style={styles.link}>
+                        Forgot Password
+                    </Text>
+                </Text>
             </View>
-            <Text style={styles.versionText}>VGM Version 1.0.0</Text>
-        </LinearGradient>
+            <Text style={styles.versionText}> Version 0.0.1</Text>
+        </View>
     );
 };
 
@@ -43,23 +85,41 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 16,
     },
+    headerContainer: {
+        flex: 1,
+    },
     input: {
         marginBottom: 16,
-        backgroundColor: '#34cadb',
+        backgroundColor: '#FFF',
     },
     button: {
         marginTop: 8,
-        backgroundColor: '#1abc9c',
+        backgroundColor: '#cfcfcf',
     },
 
     linearGradient: {
         flex: 1,
     },
     versionText: {
-        color: 'white',
+        color: '#000',
         fontSize: 16,
         textAlign: 'center',
         marginBottom: 16,
+    },
+    text: {
+        marginTop: 16,
+        textAlign: 'center',
+    },
+    link: {
+        color: 'blue',
+    },
+    logo: {
+        marginBottom: '-40%',
+        resizeMode: 'contain',
+        alignSelf: 'center',
+        width: '60%',
+        top: '5%',
+        flex: 0.3,
     },
 });
 
