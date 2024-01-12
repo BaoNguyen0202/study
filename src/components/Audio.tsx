@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Card, Title, Paragraph, Button } from 'react-native-paper';
-import { Audio } from '../utils';
+import { Audio, EnCode } from '../utils';
 import RNFS from 'react-native-fs';
 
 interface AudioState {
@@ -61,9 +61,11 @@ const AudioScreen = () => {
                 console.warn('No recorded audio available.');
                 return;
             }
+            const base64Audio = await EnCode.convertAudioToBase64(state.audioFilePath);
+            console.log('Audio Content Base64:', base64Audio);
 
-            const audioContent = await RNFS.readFile(state.audioFilePath, 'base64');
-            console.log('Audio Content Base64:', audioContent);
+            // const audioContent = await RNFS.readFile(state.audioFilePath, 'base64');
+            // console.log('Audio Content Base64:', audioContent);
         } catch (error) {
             console.error('Error reading recording:', error);
         }
