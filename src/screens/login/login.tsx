@@ -4,35 +4,38 @@ import { TextInput, Button, Text, Provider as PaperProvider } from 'react-native
 import { ImageAssets } from '../../assets';
 import { Common } from '../../utils';
 import { useMMKVString } from 'react-native-mmkv';
-import { ApiConstant, AppConstant, ScreenConstant } from '../../components/const';
 import axios from 'axios';
+import { BaseService } from '../../service/base-service';
+import { UserAccountEntity, UserAccountLoginEntity } from '../../model/user-account-entity';
+import { APP_CONSTANT, SCREEN_CONSTANT } from '../../config/configuration';
+import { ResponseAPI } from '../../model/response-api';
 
 const LoginScreen = ({ navigation }: any) => {
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [fcmToken] = useMMKVString('FCM_TOKEN');
-    const [userNameStore, setUserNameStore] = useMMKVString(AppConstant.userNameStore);
-    const [passwordStore, setPasswordStore] = useMMKVString(AppConstant.passwordStore);
+    const [userNameStore, setUserNameStore] = useMMKVString(APP_CONSTANT.userNameStore);
+    const [passwordStore, setPasswordStore] = useMMKVString(APP_CONSTANT.passwordStore);
     const [secureTextEntry, setSecureTextEntry] = useState(true);
-
+    const userService = new BaseService<UserAccountLoginEntity, UserAccountEntity>('UserAccount/Login');
+    
     const handleLogin = async () => {
         try {
-            const response = await axios.post(ApiConstant.POST_USER_LOGIN, {
-                usr: userName,
-                pwd: password,
-                device_name: Platform.OS,
-                device_id: '12345',
-            });
+            const request: UserAccountLoginEntity = {
+                userName: userName,
+                password: password
+            }
+            const response = await userService.postAsync(request);
 
-            if (response.status === 200) {
+            if (response.status === '200') {
                 const result = response.data;
-                Common.storage.set('api_key', result.result.key_details.api_key);
-                Common.storage.set('api_secret', result.result.key_details.api_secret);
-                setUserNameStore(userName);
-                setPasswordStore(password);
+                Common.storage.set('api_key', result.token);
+                Common.storage.set('api_secret', result.token);
+                setUserNameStore(result.userName);
+                setPasswordStore(result.hashpassword);
 
                 await Common.dismissKeyboard(() => {
-                    navigation.navigate(ScreenConstant.HOME);
+                    navigation.navigate(SCREEN_CONSTANT.HOME);
                 });
             } else {
                 console.error('Login failed:', response.data);
