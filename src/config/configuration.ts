@@ -1,7 +1,8 @@
 export class CONFIG_URL {
-    static API: 'http://localhost:63578';
+    static API: 'https://localhost:44330/';
     static TITLE: 'MOBILE-APP';
-    static URL_UPLOAD: 'http://localhost:63578/upload';
+    static URL_UPLOAD: "https://localhost:44330/api/Upload/GetImage?imgName=";
+    static URL_RECORD: "https://localhost:44330/api/Upload/GetRecord?fileName=";
 }
 
 export class STATUS_REPONSE_API {
@@ -17,8 +18,7 @@ export class STATUS_REPONSE_API {
 }
 
 export class APP_CONSTANT {
-    static userNameStore: 'userNameStore';
-    static passwordStore: 'passwordStore';
+    static userNameStore: 'USER_APP';
 }
 
 export class SCREEN_CONSTANT {

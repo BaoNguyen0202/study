@@ -6,4 +6,5 @@ export class CustomerEntity extends BaseEntity {
     birth?: Date | null;
     address?: string | null;
     gender?: number | null;
+    userId?: string | null;
 }

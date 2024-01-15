@@ -6,8 +6,8 @@ import { Common } from '../../utils';
 import { useMMKVString } from 'react-native-mmkv';
 import axios from 'axios';
 import { BaseService } from '../../service/base-service';
-import { UserAccountEntity, UserAccountLoginEntity } from '../../model/user-account-entity';
-import { APP_CONSTANT, SCREEN_CONSTANT } from '../../config/configuration';
+import { UserAccountEntity, UserAccountLoginEntity, UserAccountLoginResponseEntity } from '../../model/user-account-entity';
+import { APP_CONSTANT, SCREEN_CONSTANT, STATUS_REPONSE_API } from '../../config/configuration';
 import { ResponseAPI } from '../../model/response-api';
 
 const LoginScreen = ({ navigation }: any) => {
@@ -15,10 +15,9 @@ const LoginScreen = ({ navigation }: any) => {
     const [password, setPassword] = useState('');
     const [fcmToken] = useMMKVString('FCM_TOKEN');
     const [userNameStore, setUserNameStore] = useMMKVString(APP_CONSTANT.userNameStore);
-    const [passwordStore, setPasswordStore] = useMMKVString(APP_CONSTANT.passwordStore);
     const [secureTextEntry, setSecureTextEntry] = useState(true);
-    const userService = new BaseService<UserAccountLoginEntity, UserAccountEntity>('UserAccount/Login');
-    
+    const userService = new BaseService<UserAccountLoginEntity, UserAccountLoginResponseEntity>('UserAccount/Login');
+
     const handleLogin = async () => {
         try {
             const request: UserAccountLoginEntity = {
@@ -26,19 +25,19 @@ const LoginScreen = ({ navigation }: any) => {
                 password: password
             }
             const response = await userService.postAsync(request);
-            if (response?.data.status === '200') {
+            if (response?.data.status === STATUS_REPONSE_API.OK) {
                 const result = response.data.data;
-                Common.storage.set('api_key', );
-                Common.storage.set('api_secret', result?.token);
-                setUserNameStore(result?.userName);
-                setPasswordStore(result?.hashpassword);
+                Common.storage.set('user_info', JSON.stringify(result));
+                Common.storage.set('api_secret', result?.token ?? '');
+                setUserNameStore(result?.userName ?? '');
 
                 await Common.dismissKeyboard(() => {
                     navigation.navigate(SCREEN_CONSTANT.HOME);
                 });
-            } else {
-                console.error('Login failed:', response?.data);
-                Alert.alert('Login Failed', 'Invalid username or password.');
+            }
+            else {
+                console.error('Login failed:', response?.data.message);
+                Alert.alert('Login Failed', 'response?.data.message');
             }
         } catch (error) {
             console.error('Error during login:', error);
@@ -69,7 +68,7 @@ const LoginScreen = ({ navigation }: any) => {
                 </Button>
                 <Text style={styles.text}>
                     No account yet?{' '}
-                    <Text onPress={() => {}} style={styles.link}>
+                    <Text onPress={() => { }} style={styles.link}>
                         Forgot Password
                     </Text>
                 </Text>
