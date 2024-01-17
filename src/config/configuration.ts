@@ -29,4 +29,6 @@ export class SCREEN_CONSTANT {
     static ABOUT_US = 'about-us';
     static REGISTER = 'register';
     static CONTACT = 'CONTACT';
+    static MAIN_TAB = 'main-tab';
+    static DETAIL = 'detail';
 }
