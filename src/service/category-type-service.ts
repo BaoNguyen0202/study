@@ -5,9 +5,9 @@ import { CategoryTypeEntity, CategoryTypeEntitySearch } from '../model/category-
 
 export class CategoryTypeService {
 
-    getList = async (request: CategoryTypeEntitySearch): Promise<AxiosResponse<ResponseAPI<CategoryTypeEntity>> | undefined | null> => {
+    getList = async (request: CategoryTypeEntitySearch): Promise<AxiosResponse<ResponseAPI<CategoryTypeEntity[]>> | undefined | null> => {
         try {
-            return await axios.post<ResponseAPI<CategoryTypeEntity>>(CONFIG_URL.API + 'CategoryType/get-by-request', request);
+            return await axios.post<ResponseAPI<CategoryTypeEntity[]>>(CONFIG_URL.API + 'CategoryType/get-by-request', request);
         } catch (error) {
             console.error('Error:', error);
         }

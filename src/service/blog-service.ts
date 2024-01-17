@@ -6,9 +6,9 @@ import { RatingBlogEntity } from '../model/rating-blog-entity';
 
 export class BlogService {
 
-    getList = async (request: BlogEntitySearch): Promise<AxiosResponse<ResponseAPI<BlogEntity>> | undefined | null> => {
+    getList = async (request: BlogEntitySearch): Promise<AxiosResponse<ResponseAPI<BlogEntity[]>> | undefined | null> => {
         try {
-            return await axios.post<ResponseAPI<BlogEntity>>(CONFIG_URL.API + 'Blog/get-by-request', request);
+            return await axios.post<ResponseAPI<BlogEntity[]>>(CONFIG_URL.API + 'Blog/get-by-request', request);
         } catch (error) {
             console.error('Error:', error);
         }

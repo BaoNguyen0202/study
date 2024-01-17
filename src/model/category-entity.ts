@@ -14,4 +14,5 @@ export class CategoryEntity extends BaseEntity {
 }
 
 export class CategoryEntitySearch extends SearchEntity {
+    categoryTypeId?: string | null;
 }

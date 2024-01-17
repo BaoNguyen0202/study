@@ -5,9 +5,9 @@ import { CategoryEntity, CategoryEntitySearch } from '../model/category-entity';
 import { FavoriteCategoryEntity } from '../model/favorite-category-entity';
 
 export class CategoryService {
-    getList = async (request: CategoryEntitySearch): Promise<AxiosResponse<ResponseAPI<CategoryEntity>> | undefined | null> => {
+    getList = async (request: CategoryEntitySearch): Promise<AxiosResponse<ResponseAPI<CategoryEntity[]>> | undefined | null> => {
         try {
-            return await axios.post<ResponseAPI<CategoryEntity>>(CONFIG_URL.API + 'Category/get-by-request', request);
+            return await axios.post<ResponseAPI<CategoryEntity[]>>(CONFIG_URL.API + 'Category/get-by-request', request);
         } catch (error) {
             console.error('Error:', error);
         }

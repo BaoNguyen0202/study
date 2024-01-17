@@ -14,17 +14,17 @@ export class BaseService<TRequest, TResponse> {
         this.endPoint = endPoint;
     }
 
-    getAsync = async (): Promise<AxiosResponse<ResponseAPI<TResponse>> | undefined | null> => {
+    getAsync = async (): Promise<AxiosResponse<ResponseAPI<TResponse[]>> | undefined | null> => {
         try {
-            return await axios.get<ResponseAPI<TResponse>>(this.URL + this.endPoint);
+            return await axios.get<ResponseAPI<TResponse[]>>(this.URL + this.endPoint);
         } catch (error) {
             console.error('Error:', error);
         }
     };
 
-    searchAsync = async (request: TRequest): Promise<AxiosResponse<ResponseAPI<TResponse>> | undefined | null> => {
+    searchAsync = async (request: TRequest): Promise<AxiosResponse<ResponseAPI<TResponse[]>> | undefined | null> => {
         try {
-            return await axios.post<ResponseAPI<TResponse>>(this.URL + this.endPoint, request);
+            return await axios.post<ResponseAPI<TResponse[]>>(this.URL + this.endPoint, request);
         } catch (error) {
             console.error('Error:', error);
         }
