@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Alert, Platform, Image } from 'react-native';
 import { TextInput, Button, Text, Provider as PaperProvider } from 'react-native-paper';
-import { ImageAssets } from '../../assets';
 import { Common } from '../../utils';
 import { useMMKVString } from 'react-native-mmkv';
-import axios from 'axios';
 import { BaseService } from '../../service/base-service';
 import {
     UserAccountEntity,
@@ -12,7 +10,6 @@ import {
     UserAccountLoginResponseEntity,
 } from '../../model/user-account-entity';
 import { APP_CONSTANT, SCREEN_CONSTANT, STATUS_REPONSE_API } from '../../config/configuration';
-import { ResponseAPI } from '../../model/response-api';
 
 const LoginScreen = ({ navigation }: any) => {
     const [userName, setUserName] = useState('');
@@ -23,12 +20,15 @@ const LoginScreen = ({ navigation }: any) => {
     const userService = new BaseService<UserAccountLoginEntity, UserAccountLoginResponseEntity>('UserAccount/login');
 
     const handleLogin = async () => {
+        console.log(123);
+
         try {
             const request: UserAccountLoginEntity = {
                 userName: userName,
                 password: password,
             };
             const response = await userService.postAsync(request);
+
             if (response?.data?.code === STATUS_REPONSE_API.OK) {
                 const result = response.data.data;
                 Common.storage.set('user_info', JSON.stringify(result));

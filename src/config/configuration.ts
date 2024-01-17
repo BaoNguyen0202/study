@@ -21,6 +21,12 @@ export class APP_CONSTANT {
 }
 
 export class SCREEN_CONSTANT {
-    static LOG_IN = 'Login';
-    static HOME = 'Home';
+    static LOG_IN = 'login';
+    static HOME = 'home';
+    static CATEGORY_TYPE = 'category-type';
+    static CATEGORY = 'category';
+    static BLOG = 'blog';
+    static ABOUT_US = 'about-us';
+    static REGISTER = 'register';
+    static CONTACT = 'CONTACT';
 }
