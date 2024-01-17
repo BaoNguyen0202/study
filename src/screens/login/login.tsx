@@ -20,7 +20,6 @@ const LoginScreen = ({ navigation }: any) => {
     const userService = new BaseService<UserAccountLoginEntity, UserAccountLoginResponseEntity>('UserAccount/login');
 
     const handleLogin = async () => {
-
         try {
             const request: UserAccountLoginEntity = {
                 userName: userName,
@@ -35,7 +34,7 @@ const LoginScreen = ({ navigation }: any) => {
                 setUserNameStore(result?.userName ?? '');
 
                 await Common.dismissKeyboard(() => {
-                    navigation.navigate(SCREEN_CONSTANT.HOME);
+                    navigation.navigate(SCREEN_CONSTANT.MAIN_TAB);
                 });
             } else {
                 console.error('Login failed:', response?.data.message);

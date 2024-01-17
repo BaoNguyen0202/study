@@ -3,23 +3,17 @@ import { NavigationContainer } from '@react-navigation/native';
 import { PaperProvider } from 'react-native-paper';
 import { Provider } from 'react-redux';
 import store from './src/redux-store/store';
-import HomeScreen from './src/screens/Home';
-import DetailsScreen from './src/screens/Detail';
+import HomeScreen from './src/screens/home/Home';
+import DetailsScreen from './src/screens/detail/Detail';
 import AudioScreen from './src/components/Audio';
 import LoginScreen from './src/screens/login/login';
+import AppNavigationContainer from './src/navigation';
 const Stack = createStackNavigator();
 const App = () => {
     return (
         <Provider store={store}>
             <PaperProvider>
-                <NavigationContainer>
-                    <Stack.Navigator initialRouteName="Login">
-                        <Stack.Screen name="login" component={LoginScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="home" component={HomeScreen} />
-                        <Stack.Screen name="details" component={DetailsScreen} />
-                        <Stack.Screen name="dudio" component={AudioScreen} />
-                    </Stack.Navigator>
-                </NavigationContainer>
+                <AppNavigationContainer></AppNavigationContainer>
             </PaperProvider>
         </Provider>
     );
