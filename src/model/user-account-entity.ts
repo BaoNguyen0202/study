@@ -13,7 +13,6 @@ export class UserAccountEntity extends BaseEntity {
     role?: RoleEntity | null;
 }
 
-
 export class UserAccountLoginEntity extends BaseEntity {
     userName?: string | null;
     password?: string | null;
