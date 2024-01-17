@@ -20,7 +20,6 @@ const LoginScreen = ({ navigation }: any) => {
     const userService = new BaseService<UserAccountLoginEntity, UserAccountLoginResponseEntity>('UserAccount/login');
 
     const handleLogin = async () => {
-        console.log(123);
 
         try {
             const request: UserAccountLoginEntity = {
@@ -71,7 +70,7 @@ const LoginScreen = ({ navigation }: any) => {
                 </Button>
                 <Text style={styles.text}>
                     No account yet?{' '}
-                    <Text onPress={() => {}} style={styles.link}>
+                    <Text onPress={() => { }} style={styles.link}>
                         Forgot Password
                     </Text>
                 </Text>
