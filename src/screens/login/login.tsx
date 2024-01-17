@@ -6,7 +6,11 @@ import { Common } from '../../utils';
 import { useMMKVString } from 'react-native-mmkv';
 import axios from 'axios';
 import { BaseService } from '../../service/base-service';
-import { UserAccountEntity, UserAccountLoginEntity, UserAccountLoginResponseEntity } from '../../model/user-account-entity';
+import {
+    UserAccountEntity,
+    UserAccountLoginEntity,
+    UserAccountLoginResponseEntity,
+} from '../../model/user-account-entity';
 import { APP_CONSTANT, SCREEN_CONSTANT, STATUS_REPONSE_API } from '../../config/configuration';
 import { ResponseAPI } from '../../model/response-api';
 
@@ -16,16 +20,16 @@ const LoginScreen = ({ navigation }: any) => {
     const [fcmToken] = useMMKVString('FCM_TOKEN');
     const [userNameStore, setUserNameStore] = useMMKVString(APP_CONSTANT.userNameStore);
     const [secureTextEntry, setSecureTextEntry] = useState(true);
-    const userService = new BaseService<UserAccountLoginEntity, UserAccountLoginResponseEntity>('UserAccount/Login');
+    const userService = new BaseService<UserAccountLoginEntity, UserAccountLoginResponseEntity>('UserAccount/login');
 
     const handleLogin = async () => {
         try {
             const request: UserAccountLoginEntity = {
                 userName: userName,
-                password: password
-            }
+                password: password,
+            };
             const response = await userService.postAsync(request);
-            if (response?.data.status === STATUS_REPONSE_API.OK) {
+            if (response?.data?.code === STATUS_REPONSE_API.OK) {
                 const result = response.data.data;
                 Common.storage.set('user_info', JSON.stringify(result));
                 Common.storage.set('api_secret', result?.token ?? '');
@@ -34,8 +38,7 @@ const LoginScreen = ({ navigation }: any) => {
                 await Common.dismissKeyboard(() => {
                     navigation.navigate(SCREEN_CONSTANT.HOME);
                 });
-            }
-            else {
+            } else {
                 console.error('Login failed:', response?.data.message);
                 Alert.alert('Login Failed', 'response?.data.message');
             }
@@ -68,7 +71,7 @@ const LoginScreen = ({ navigation }: any) => {
                 </Button>
                 <Text style={styles.text}>
                     No account yet?{' '}
-                    <Text onPress={() => { }} style={styles.link}>
+                    <Text onPress={() => {}} style={styles.link}>
                         Forgot Password
                     </Text>
                 </Text>

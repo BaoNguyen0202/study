@@ -1,28 +1,26 @@
 export class CONFIG_URL {
-    static API: 'https://localhost:44330/';
-    static TITLE: 'MOBILE-APP';
-    static URL_UPLOAD: "https://localhost:44330/api/Upload/GetImage?imgName=";
-    static URL_RECORD: "https://localhost:44330/api/Upload/GetRecord?fileName=";
+    static API = 'https://tientulac.bsite.net/api/';
+    static TITLE = 'MOBILE-APP';
+    static URL_UPLOAD = 'https://localhost:44330/api/Upload/GetImage?imgName=';
+    static URL_RECORD = 'https://localhost:44330/api/Upload/GetRecord?fileName=';
 }
-
 export class STATUS_REPONSE_API {
-    static OK: '200';
-    static CREATED: '201';
-    static BAD_REQUEST: '400';
-    static UNAUTHORIZED: '401';
-    static FORBIDDEN: '403';
-    static NOT_FOUND: '404';
-    static REQUEST_TIME_OUT: '408';
-    static INTERNAL_SERVER: '500';
-    static NOT_MODIFIED: '304';
+    static OK = '200';
+    static CREATED = '201';
+    static BAD_REQUEST = '400';
+    static UNAUTHORIZED = '401';
+    static FORBIDDEN = '403';
+    static NOT_FOUND = '404';
+    static REQUEST_TIME_OUT = '408';
+    static INTERNAL_SERVER = '500';
+    static NOT_MODIFIED = '304';
 }
 
 export class APP_CONSTANT {
-    static userNameStore: 'USER_APP';
+    static userNameStore = 'USER_APP';
 }
 
 export class SCREEN_CONSTANT {
-    static LOG_IN: 'login';
-    static HOME: 'home';
+    static LOG_IN = 'Login';
+    static HOME = 'Home';
 }
-
