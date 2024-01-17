@@ -4,10 +4,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { PaperProvider } from 'react-native-paper';
 import { Provider } from 'react-redux';
 import LoginScreen from '../screens/login/login';
-import HomeScreen from '../screens/home/Home';
-import DetailsScreen from '../screens/detail/Detail';
-import AudioScreen from '../components/Audio';
-import MainTab from './MainTab';
+import HomeScreen from '../screens/home/home';
+import DetailsScreen from '../screens/detail/detail';
+import AudioScreen from '../components/audio';
+import MainTab from './main-tab';
 import { SCREEN_CONSTANT } from '../config/configuration';
 
 const Stack = createStackNavigator();
