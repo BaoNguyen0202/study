@@ -7,6 +7,7 @@ export class CategoryTypeEntity extends BaseEntity {
     name?: boolean | null;
     image?: boolean | null;
     status?: number | null;
+    selected?: boolean | null;
 }
 
 export class CategoryTypeEntitySearch extends SearchEntity {

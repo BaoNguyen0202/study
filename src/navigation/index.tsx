@@ -9,6 +9,7 @@ import DetailsScreen from '../screens/detail/Detail';
 import AudioScreen from '../components/Audio';
 import MainTab from './MainTab';
 import { SCREEN_CONSTANT } from '../config/configuration';
+import CategoryTypeScreen from '../screens/main/category-type/category-type';
 
 const Stack = createStackNavigator();
 
@@ -20,6 +21,7 @@ const AppNavigationContainer = () => {
                 <Stack.Screen name={SCREEN_CONSTANT.MAIN_TAB} component={MainTab} />
                 <Stack.Screen name={SCREEN_CONSTANT.HOME} component={HomeScreen} />
                 <Stack.Screen name={SCREEN_CONSTANT.DETAIL} component={DetailsScreen} />
+                <Stack.Screen name={SCREEN_CONSTANT.CATEGORY_TYPE} component={CategoryTypeScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     );

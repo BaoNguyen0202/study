@@ -13,3 +13,5 @@ export class PaginatedList<T> {
     pageIndex?: number | null;
     pageSize?: number | null;
 }
+
+

@@ -1,5 +1,5 @@
 export class CONFIG_URL {
-    static API = 'https://tientulac.bsite.net/api/';
+    static API = 'https://localhost:44330/api/';
     static TITLE = 'MOBILE-APP';
     static URL_UPLOAD = 'https://localhost:44330/api/Upload/GetImage?imgName=';
     static URL_RECORD = 'https://localhost:44330/api/Upload/GetRecord?fileName=';
