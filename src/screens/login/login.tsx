@@ -10,6 +10,9 @@ import {
     UserAccountLoginResponseEntity,
 } from '../../model/user-account-entity';
 import { APP_CONSTANT, SCREEN_CONSTANT, STATUS_REPONSE_API } from '../../config/configuration';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../redux-store/store';
+import { useTheme } from '@react-navigation/native'
 
 const LoginScreen = ({ navigation }: any) => {
     const [userName, setUserName] = useState('');
@@ -18,6 +21,13 @@ const LoginScreen = ({ navigation }: any) => {
     const [userNameStore, setUserNameStore] = useMMKVString(APP_CONSTANT.userNameStore);
     const [secureTextEntry, setSecureTextEntry] = useState(true);
     const userService = new BaseService<UserAccountLoginEntity, UserAccountLoginResponseEntity>('UserAccount/login');
+    const { colors } = useTheme();
+    const dispatch = useDispatch();
+    const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+
+    const handleToggleMode = () => {
+        dispatch({ type: 'TOGGLE_DARK_MODE' });
+    };
 
     const handleLogin = async () => {
         try {
@@ -46,7 +56,7 @@ const LoginScreen = ({ navigation }: any) => {
         }
     };
     return (
-        <View style={styles.headerContainer}>
+        <View style={styles.container}>
             {/* <Image source={ImageAssets.InitLogo} style={styles.logo} /> */}
 
             <View style={styles.container}>
@@ -67,14 +77,17 @@ const LoginScreen = ({ navigation }: any) => {
                 <Button mode="contained-tonal" icon={'camera'} onPress={handleLogin} style={styles.button}>
                     Log In
                 </Button>
-                <Text style={styles.text}>
+                <Button onPress={handleToggleMode} mode="contained-tonal" style={{ marginVertical: 18, width: '100%', backgroundColor: '#FFF' }}>
+                    {darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                </Button>
+                <Text style={[styles.text, { color: colors.text }]}>
                     No account yet?{' '}
                     <Text onPress={() => { }} style={styles.link}>
                         Forgot Password
                     </Text>
                 </Text>
             </View>
-            <Text style={styles.versionText}> Version 0.0.1</Text>
+            <Text style={[styles.versionText, { color: colors.text }]}> Version 0.0.1</Text>
         </View>
     );
 };
@@ -85,6 +98,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 16,
     },
+    darkContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        padding: 16,
+        backgroundColor: '#000',
+    },
     headerContainer: {
         flex: 1,
     },
@@ -94,14 +113,11 @@ const styles = StyleSheet.create({
     },
     button: {
         marginTop: 8,
-        backgroundColor: '#cfcfcf',
+        backgroundColor: '#FFF',
     },
 
-    linearGradient: {
-        flex: 1,
-    },
     versionText: {
-        color: '#000',
+        color: 'red',
         fontSize: 16,
         textAlign: 'center',
         marginBottom: 16,
@@ -111,7 +127,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     link: {
-        color: 'blue',
+        color: '#4284f5',
     },
     logo: {
         marginBottom: '-40%',
@@ -121,6 +137,8 @@ const styles = StyleSheet.create({
         top: '5%',
         flex: 0.3,
     },
+
+
 });
 
 export default LoginScreen;
