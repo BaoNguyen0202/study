@@ -1,3 +1,5 @@
+import { Dimensions } from "react-native";
+
 interface DataConstant {
     id?: number;
     name?: string;
@@ -10,3 +12,5 @@ export const LIST_STATUS: DataConstant[] = [
 ];
 
 
+export const WIDTH = Dimensions.get('window').width;
+export const HEIGHT = Dimensions.get('window').height;
