@@ -9,6 +9,7 @@ import MainTab from './main-tab';
 import { SCREEN_CONSTANT } from '../config/configuration';
 import { RootState } from '../redux-store/store';
 import { StyleSheet } from 'react-native';
+import CategoryTypeScreen from '../screens/main/category-type/category-type';
 
 const Stack = createStackNavigator();
 
@@ -34,6 +35,11 @@ const AppNavigationContainer = () => {
                     name={SCREEN_CONSTANT.DETAIL}
                     component={DetailsScreen}
                     options={{ title: 'Detail', headerTitleStyle: { color: theme.colors.text } }}
+                />
+                <Stack.Screen
+                    name={SCREEN_CONSTANT.CATEGORY_TYPE}
+                    component={CategoryTypeScreen}
+                    options={{ title: 'CategoryType', headerTitleStyle: { color: theme.colors.text } }}
                 />
             </Stack.Navigator>
         </NavigationContainer>

@@ -8,6 +8,7 @@ import { CategoryTypeEntity } from "../../../model/category-type-entity";
 import { Avatar, Button, Chip, Text } from 'react-native-paper';
 import { UserAccountCategoryType } from "../../../model/user-account-entity";
 import { Common } from "../../../utils";
+import { useTheme } from '@react-navigation/native'
 
 interface ChipSelected {
     id?: number | null;
@@ -20,7 +21,7 @@ const CategoryTypeScreen = ({ navigation }: any) => {
     const [pageSize, setPageSize] = useState<number>(1000000);
     const [pageIndex, setPageIndex] = useState<number>(1);
     const [data, setData] = useState<CategoryTypeEntity[]>([]);
-    const [selectedChips, setSelectedChips] = useState({});
+    const { colors } = useTheme();
 
     const dataSearch: CategoryEntitySearch = {
         id: null,
@@ -68,8 +69,9 @@ const CategoryTypeScreen = ({ navigation }: any) => {
 
             if (response?.data?.code === STATUS_REPONSE_API.OK) {
                 await Common.dismissKeyboard(() => {
-                    navigation.navigate(SCREEN_CONSTANT.MAIN_TAB);
+                    navigation.navigate(SCREEN_CONSTANT.HOME);
                 });
+                console.log('success');
             } else {
                 console.error('Failed:', response?.data.message);
                 Alert.alert('Failed', response?.data.message ?? 'Error');
@@ -87,7 +89,7 @@ const CategoryTypeScreen = ({ navigation }: any) => {
 
     return (
         <View style={styles.headerContainer}>
-            <Text style={styles.centeredText}>Hãy lựa chọn chủ đề phù hợp với bạn!</Text>
+            <Text style={styles.centeredTextTitle}>Hãy lựa chọn chủ đề phù hợp với bạn!</Text>
             <ScrollView contentContainerStyle={styles.container}>
                 {data.map((tag, index) => (
                     <Chip
@@ -99,7 +101,7 @@ const CategoryTypeScreen = ({ navigation }: any) => {
                         onPress={() => handleChipPress(tag.id)}
                         avatar={<Avatar.Image source={{ uri: CONFIG_URL.URL_UPLOAD + tag.image }} size={24} />}
                     >
-                        {tag.name}
+                        <Text style={{ color: !tag.selected ? '#FE2083' : colors.text, fontWeight: 'bold' }}>{tag.name}</Text>
                     </Chip>
                 ))}
             </ScrollView>
@@ -107,7 +109,7 @@ const CategoryTypeScreen = ({ navigation }: any) => {
                 data.filter(x => x.selected === true).length > 0 ?
                     (<Button
                         style={styles.bottomButtonContainer} mode="contained" onPress={() => handleConfirm()}>
-                        <Text style={{ color: 'black', fontWeight: 'bold' }}>Tiếp theo</Text>
+                        <Text style={{ color: colors.text, fontWeight: 'bold' }}>Tiếp theo</Text>
                     </Button>) : <></>
             }
         </View>
@@ -127,21 +129,25 @@ const styles = StyleSheet.create({
         margin: 4,
         backgroundColor: '#e3dcab',
     },
-    centeredText: {
+    centeredTextTitle: {
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 16,
         textAlign: 'center',
-        padding: 16
+        padding: 16,
+        color: '#FE2083',
+    },
+    centeredText: {
+        textAlign: 'center',
     },
     selectedChip: {
         margin: 4,
-        backgroundColor: '#ffd400',
+        backgroundColor: '#FE2083',
     },
     bottomButtonContainer: {
         marginTop: 20,
         alignSelf: 'center',
-        backgroundColor: '#ffd400',
+        backgroundColor: '#FE2083',
         color: 'red'
     },
 });
