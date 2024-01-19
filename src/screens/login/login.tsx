@@ -44,7 +44,7 @@ const LoginScreen = ({ navigation }: any) => {
                 setUserNameStore(result?.userName ?? '');
 
                 await Common.dismissKeyboard(() => {
-                    navigation.navigate(SCREEN_CONSTANT.MAIN_TAB);
+                    navigation.navigate(SCREEN_CONSTANT.CATEGORY_TYPE);
                 });
             } else {
                 console.error('Login failed:', response?.data.message);

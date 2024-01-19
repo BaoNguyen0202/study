@@ -1,8 +1,8 @@
 export class CONFIG_URL {
-    static API = 'https://localhost:44330/api/';
+    static API = 'https://tientulac.bsite.net/api/';
     static TITLE = 'MOBILE-APP';
-    static URL_UPLOAD = 'https://localhost:44330/api/Upload/GetImage?imgName=';
-    static URL_RECORD = 'https://localhost:44330/api/Upload/GetRecord?fileName=';
+    static URL_UPLOAD = 'https://tientulac.bsite.net/api/Upload/GetImage?imgName=';
+    static URL_RECORD = 'https://tientulac.bsite.net/api/Upload/GetRecord?fileName=';
 }
 export class STATUS_REPONSE_API {
     static OK = '200';

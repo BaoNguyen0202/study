@@ -13,6 +13,11 @@ export class UserAccountEntity extends BaseEntity {
     role?: RoleEntity | null;
 }
 
+export class UserAccountCategoryType {
+    userAccountId?: string | null;
+    categoryTypeIds?: (string | null | undefined)[];
+}
+
 export class UserAccountLoginEntity extends BaseEntity {
     userName?: string | null;
     password?: string | null;

@@ -1,13 +1,13 @@
 import axios, { AxiosResponse } from 'axios';
 import { CONFIG_URL } from '../config/configuration';
-import { ResponseAPI } from '../model/response-api';
+import { PaginatedList, ResponseAPI } from '../model/response-api';
 import { RatingBlogEntity, RatingBlogEntitySearch } from '../model/rating-blog-entity';
 import { FavoriteCategoryEntity } from '../model/favorite-category-entity';
 
 export class RatingBlogService {
-    getList = async (request: RatingBlogEntitySearch): Promise<AxiosResponse<ResponseAPI<RatingBlogEntity[]>> | undefined | null> => {
+    getList = async (request: RatingBlogEntitySearch): Promise<AxiosResponse<ResponseAPI<PaginatedList<RatingBlogEntity>>> | undefined | null> => {
         try {
-            return await axios.post<ResponseAPI<RatingBlogEntity[]>>(CONFIG_URL.API + 'RatingBlog/get-by-request', request);
+            return await axios.post<ResponseAPI<PaginatedList<RatingBlogEntity>>>(CONFIG_URL.API + 'RatingBlog/get-by-request', request);
         } catch (error) {
             console.error('Error:', error);
         }
