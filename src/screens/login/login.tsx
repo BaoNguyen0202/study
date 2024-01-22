@@ -22,13 +22,6 @@ const LoginScreen = ({ navigation }: any) => {
     const [userNameStore, setUserNameStore] = useMMKVString(APP_CONSTANT.userNameStore);
     const [secureTextEntry, setSecureTextEntry] = useState(true);
     const userService = new BaseService<UserAccountLoginEntity, UserAccountLoginResponseEntity>('UserAccount/login');
-    const { colors, } = useTheme();
-    const dispatch = useDispatch();
-    const darkMode = useSelector((state: RootState) => state.theme.darkMode);
-
-    const handleToggleMode = () => {
-        dispatch({ type: 'TOGGLE_DARK_MODE' });
-    };
 
     const handleLogin = async () => {
         try {
@@ -87,15 +80,18 @@ const LoginScreen = ({ navigation }: any) => {
                 <Button mode="contained" onPress={handleLogin} style={styles.button}>
                     Bắt đầu
                 </Button>
-                <View style={{ marginVertical: 16, flexDirection: 'row', alignItems: 'center' }}>
+                <View style={styles.row}>
                     <View style={styles.line} />
                     <Text style={{ color: '#FFF', marginHorizontal: 8 }}>Hoặc đăng nhập với</Text>
                     <View style={styles.line} />
                 </View>
-                <View style={{ marginVertical: 16, flexDirection: 'row', alignItems: 'center' }}>
-
+                <View style={styles.list_ic}>
+                    <Image source={ImageAssets.facebook_ic} />
+                    <Image source={ImageAssets.google_ic} />
+                    <Image source={ImageAssets.ios_ic} />
                 </View>
             </View>
+            <Text style={styles.textNoAcount}>Bạn chưa có tài khoản?<Text style={{ color: '#FE2083' }}>Đăng ký ngay</Text></Text>
         </View>
     );
 };
@@ -157,6 +153,24 @@ const styles = StyleSheet.create({
         height: 1,
         backgroundColor: '#FFF',
     },
+    textNoAcount: {
+        color: "#FFF",
+        alignSelf: 'center',
+        marginBottom: 36,
+        fontSize: 14,
+        fontWeight: '600'
+    },
+    list_ic: {
+        marginVertical: 16,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    },
+    row: {
+        marginVertical: 16,
+        flexDirection: 'row',
+        alignItems: 'center'
+    }
 });
 
 export default LoginScreen;
