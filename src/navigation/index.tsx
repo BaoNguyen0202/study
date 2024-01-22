@@ -9,6 +9,7 @@ import MainTab from './main-tab';
 import { SCREEN_CONSTANT } from '../config/configuration';
 import { RootState } from '../redux-store/store';
 import { StyleSheet } from 'react-native';
+import HelloScreen from '../screens/login/hello-screen';
 
 const Stack = createStackNavigator();
 
@@ -19,6 +20,7 @@ const AppNavigationContainer = () => {
     return (
         <NavigationContainer theme={theme}>
             <Stack.Navigator initialRouteName="Login">
+                <Stack.Screen name={SCREEN_CONSTANT.HELLO} component={HelloScreen} options={{ headerShown: false }} />
                 <Stack.Screen name={SCREEN_CONSTANT.LOG_IN} component={LoginScreen} options={{ headerShown: false }} />
                 <Stack.Screen
                     name={SCREEN_CONSTANT.MAIN_TAB}

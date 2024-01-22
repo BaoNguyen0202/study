@@ -31,4 +31,5 @@ export class SCREEN_CONSTANT {
     static CONTACT = 'CONTACT';
     static MAIN_TAB = 'main-tab';
     static DETAIL = 'detail';
+    static HELLO = 'hello';
 }
