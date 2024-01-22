@@ -1,16 +1,20 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Image } from 'react-native'
 import React from 'react'
-import { Button, Title } from 'react-native-paper'
+import { Button } from 'react-native-paper'
 import { SCREEN_CONSTANT } from '../../config/configuration'
-import { useTheme } from '@react-navigation/native'
+import { ImageAssets } from '../../assets'
 
 const HelloScreen = ({ navigation }: any) => {
-    const { colors } = useTheme();
     return (
         <View style={styles.container}>
-            <Text style={[styles.title, { color: colors.text }]}>PO<Text style={{ color: '#FE2083' }}>D</Text></Text>
-            <Text style={[styles.titleCont, { color: colors.text }]}>Chào mừng đến với PO<Text style={{ color: '#FE2083' }}>D</Text></Text>
-            <Text style={[styles.titleSub, { color: colors.text }]}>Hãy chia sẻ và học hỏi kiến thức cùng chúng tôi !</Text>
+            <Image source={ImageAssets.Bg_Image} style={styles.bgImage} />
+            <Image source={ImageAssets.Bg_Image2} style={styles.bgImage2} />
+
+            <Text style={styles.title}>PO<Text style={{ color: '#FE2083' }}>D</Text></Text>
+            <Image source={ImageAssets.Bg_Image3} style={styles.bgImage3} />
+
+            <Text style={styles.titleCont}>Chào mừng đến với PO<Text style={{ color: '#FE2083' }}>D</Text></Text>
+            <Text style={styles.titleSub}>Hãy chia sẻ và học hỏi kiến thức cùng chúng tôi !</Text>
             <Button onPress={() => { navigation.navigate(SCREEN_CONSTANT.LOG_IN) }} mode='contained' style={styles.btn}>
                 Bắt đầu
             </Button>
@@ -26,7 +30,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     title: {
-        marginTop: 71,
+        marginTop: 51,
         marginLeft: 24,
         fontSize: 77,
         fontWeight: '800',
@@ -63,6 +67,26 @@ const styles = StyleSheet.create({
         gap: 10,
         borderColor: '#FE2083',
 
+    },
+    bgImage: {
+        flex: 1,
+        width: '100%',
+        height: '100%',
+        position: 'absolute',
+        zIndex: -9999
+    },
+    bgImage2: {
+        flex: 1,
+        width: '100%',
+        height: '100%',
+        position: 'absolute',
+        zIndex: -999
+    },
+    bgImage3: {
+        width: '55%',
+        height: '50%',
+        alignSelf: 'flex-end',
+        marginTop: -46
     }
 })
 export default HelloScreen
