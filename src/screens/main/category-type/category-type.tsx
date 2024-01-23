@@ -69,6 +69,7 @@ const CategoryTypeScreen = ({ navigation }: any) => {
 
             if (response?.data?.code === STATUS_REPONSE_API.OK) {
                 await Common.dismissKeyboard(() => {
+                    Common.storage.set('category_type_selected_ids', JSON.stringify(data.map(x => x.id)));
                     navigation.navigate(SCREEN_CONSTANT.HOME);
                 });
                 console.log('success');
@@ -88,7 +89,7 @@ const CategoryTypeScreen = ({ navigation }: any) => {
     }, [pageIndex, pageSize, categoryTypeSearch]);
 
     return (
-        <View style={styles.headerContainer}>
+        <View style={[styles.headerContainer, { flex: 1, backgroundColor: '#1A1429' }]}>
             <Text style={styles.centeredTextTitle}>Hãy lựa chọn chủ đề phù hợp với bạn!</Text>
             <ScrollView contentContainerStyle={styles.container}>
                 {data.map((tag, index) => (
@@ -101,7 +102,7 @@ const CategoryTypeScreen = ({ navigation }: any) => {
                         onPress={() => handleChipPress(tag.id)}
                         avatar={<Avatar.Image source={{ uri: CONFIG_URL.URL_UPLOAD + tag.image }} size={24} />}
                     >
-                        <Text style={{ color: !tag.selected ? '#FE2083' : colors.text, fontWeight: 'bold' }}>{tag.name}</Text>
+                        <Text style={{ color: !tag.selected ? '#FE2083' : '#FFFFFF', fontWeight: 'bold' }}>{tag.name}</Text>
                     </Chip>
                 ))}
             </ScrollView>
@@ -109,7 +110,7 @@ const CategoryTypeScreen = ({ navigation }: any) => {
                 data.filter(x => x.selected === true).length > 0 ?
                     (<Button
                         style={styles.bottomButtonContainer} mode="contained" onPress={() => handleConfirm()}>
-                        <Text style={{ color: colors.text, fontWeight: 'bold' }}>Tiếp theo</Text>
+                        <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>Tiếp theo</Text>
                     </Button>) : <></>
             }
         </View>
@@ -128,6 +129,7 @@ const styles = StyleSheet.create({
     chipTag: {
         margin: 4,
         backgroundColor: '#e3dcab',
+        color: '#FFFFFF',
     },
     centeredTextTitle: {
         fontSize: 18,
@@ -139,16 +141,16 @@ const styles = StyleSheet.create({
     },
     centeredText: {
         textAlign: 'center',
+        color: '#FFFFFF',
     },
     selectedChip: {
         margin: 4,
         backgroundColor: '#FE2083',
     },
     bottomButtonContainer: {
-        marginTop: 20,
         alignSelf: 'center',
         backgroundColor: '#FE2083',
-        color: 'red'
+        bottom: 30
     },
 });
 

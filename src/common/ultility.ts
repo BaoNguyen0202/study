@@ -1,20 +1,27 @@
 import _ from 'lodash';
+import { differenceInDays, format, formatDistance, formatDistanceToNow, subDays } from 'date-fns';
+import { vi } from 'date-fns/locale/vi'
 
 export class Ultility {
-    convertToNumber = (value: any) => {
+    static convertToNumber = (value: any) => {
         if (value) {
             return _.toNumber(value);
         }
         return null;
     }
 
-    orderArray = (arr: [], field: [], type: string = 'asc') => {
+    static orderArray = (arr: [], field: [], type: string = 'asc') => {
         return _.orderBy(arr, field, [type]);
     }
 
-    filterByField = (arr: [], field: string, value: any) => {
+    static filterByField = (arr: [], field: string, value: any) => {
         return _.filter(arr, (item) => item[field] === value) ?? null;
     }
 
-    getUserInfo = () => { }
+    static formatDistanceToNow = (dateTime: Date | null | undefined) => {
+        return dateTime ? formatDistance(subDays(new Date(), differenceInDays(dateTime, new Date())), new Date(), { addSuffix: true, locale: vi })
+            : 'Một tháng trước';
+    }
+
+    static getUserInfo = () => { }
 }

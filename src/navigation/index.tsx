@@ -32,7 +32,7 @@ const AppNavigationContainer = () => {
                 <Stack.Screen
                     name={SCREEN_CONSTANT.HOME}
                     component={HomeScreen}
-                    options={{ title: 'Home', headerTitleStyle: { color: theme.colors.text } }}
+                    options={{ headerShown: false }}
                 />
                 <Stack.Screen
                     name={SCREEN_CONSTANT.DETAIL}
@@ -42,7 +42,7 @@ const AppNavigationContainer = () => {
                 <Stack.Screen
                     name={SCREEN_CONSTANT.CATEGORY_TYPE}
                     component={CategoryTypeScreen}
-                    options={{ title: 'CategoryType', headerTitleStyle: { color: theme.colors.text } }}
+                    options={{ headerShown: false }}
                 />
             </Stack.Navigator>
         </NavigationContainer>
