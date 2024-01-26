@@ -21,28 +21,29 @@ const AppNavigationContainer = () => {
 
     return (
         <NavigationContainer theme={theme}>
-            <Stack.Navigator initialRouteName="Login">
+            <Stack.Navigator>
                 <Stack.Screen name={SCREEN_CONSTANT.HELLO} component={HelloScreen} options={{ headerShown: false }} />
                 <Stack.Screen name={SCREEN_CONSTANT.LOG_IN} component={LoginScreen} options={{ headerShown: false }} />
                 <Stack.Screen
-                    name={SCREEN_CONSTANT.MAIN_TAB}
-                    component={MainTab}
-                    options={{ title: 'Main Tab', headerTitleStyle: { color: theme.colors.text } }}
-                />
-                <Stack.Screen
                     name={SCREEN_CONSTANT.HOME}
                     component={HomeScreen}
-                    options={{ title: 'Home', headerTitleStyle: { color: theme.colors.text } }}
+                    options={{ title: 'Home', headerTitleStyle: { color: theme.colors.text }, headerShown: false }}
                 />
+                <Stack.Screen
+                    name={SCREEN_CONSTANT.MAIN_TAB}
+                    component={MainTab}
+                    options={{ title: 'MainTab', headerTitleStyle: { color: theme.colors.text }, headerShown: false }}
+                />
+
                 <Stack.Screen
                     name={SCREEN_CONSTANT.DETAIL}
                     component={DetailsScreen}
-                    options={{ title: 'Detail', headerTitleStyle: { color: theme.colors.text } }}
+                    options={{ title: 'Detail', headerTitleStyle: { color: theme.colors.text }, headerShown: false }}
                 />
                 <Stack.Screen
                     name={SCREEN_CONSTANT.CATEGORY_TYPE}
                     component={CategoryTypeScreen}
-                    options={{ title: 'CategoryType', headerTitleStyle: { color: theme.colors.text } }}
+                    options={{ title: 'CategoryType', headerTitleStyle: { color: theme.colors.text }, headerShown: false }}
                 />
             </Stack.Navigator>
         </NavigationContainer>

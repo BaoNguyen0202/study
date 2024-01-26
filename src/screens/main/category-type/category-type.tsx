@@ -69,7 +69,7 @@ const CategoryTypeScreen = ({ navigation }: any) => {
 
             if (response?.data?.code === STATUS_REPONSE_API.OK) {
                 await Common.dismissKeyboard(() => {
-                    navigation.navigate(SCREEN_CONSTANT.HOME);
+                    navigation.navigate(SCREEN_CONSTANT.MAIN_TAB);
                 });
                 console.log('success');
             } else {
