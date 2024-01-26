@@ -6,11 +6,10 @@ import { PaginationEntity } from "../../../model/pagination-entity";
 import { CONFIG_URL, SCREEN_CONSTANT, STATUS_REPONSE_API } from "../../../config/configuration";
 import { Alert, FlatList, ImageBackground, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { ActivityIndicator, Appbar, Avatar, Icon, MD2Colors, Searchbar, Surface } from "react-native-paper";
+import { favoriteCategoryStyles } from "./favorite-category.style";
 import { HEIGHT } from "../../../common/constant";
-import { favoriteCategoryStyles } from "../favorite-category/favorite-category.style";
-import { useNavigation } from "@react-navigation/native";
 
-const CategoryScreen = ({ navigation }: any) => {
+const FavoriteCategoryScreen = ({ navigation }: any) => {
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isSearch, setIsSearch] = useState<boolean>(false);
@@ -50,7 +49,7 @@ const CategoryScreen = ({ navigation }: any) => {
         request.pagingAndSortingModel.orderColumn = 'Name';
         request.pagingAndSortingModel.orderDirection = 'asc';
         setIsLoading(true);
-        await categoryService.getList(request).then(res => {
+        await categoryService.getListFavorite(request).then(res => {
             if (res?.data.code === STATUS_REPONSE_API.OK) {
                 setData(res.data.data?.items ?? []);
                 setIsLoading(false);
@@ -79,17 +78,19 @@ const CategoryScreen = ({ navigation }: any) => {
         }
         let response = await categoryService.saveFavoriteCategory(req);
         if (response?.data.code === STATUS_REPONSE_API.OK) {
-            setData((prevCategories) =>
-                prevCategories.map((c) =>
-                    c.id === category.id ? { ...c, selected: !c.selected } : c
-                )
-            );
+            setData(data.filter(x => x.id !== category.id));
             Alert.alert('Thao tác thành công');
         }
         else {
             console.error('Failed:', response?.data.message);
             Alert.alert('Failed', response?.data.message ?? '');
         }
+    }
+
+    const navigateCategoryScreen = async () => {
+        await Common.dismissKeyboard(() => {
+            navigation.navigate(SCREEN_CONSTANT.CATEGORY);
+        });
     }
 
     useEffect(() => {
@@ -106,7 +107,7 @@ const CategoryScreen = ({ navigation }: any) => {
                 style={favoriteCategoryStyles.backgroundImage}
             >
                 <View style={favoriteCategoryStyles.nameCategory}>
-                    <TouchableOpacity style={item.selected ? favoriteCategoryStyles.bookMarkSelected : favoriteCategoryStyles.bookMarkDisabled} onPress={() => saveFavoriteCategory(item)}>
+                    <TouchableOpacity style={favoriteCategoryStyles.bookMarkSelected} onPress={() => saveFavoriteCategory(item)}>
                         <Icon color='#FFFFFF' source={'bookmark'} size={15}></Icon>
                     </TouchableOpacity>
                     <View style={favoriteCategoryStyles.paper}>
@@ -131,15 +132,25 @@ const CategoryScreen = ({ navigation }: any) => {
                     onSubmitEditing={handleSearch}
                 />
                 : <></>}
-            <View style={[favoriteCategoryStyles.section, { height: HEIGHT / 14 }]}>
+            <View style={[favoriteCategoryStyles.section, { height: HEIGHT / 16 }]}>
                 <Appbar.Header style={favoriteCategoryStyles.header}>
                     <View style={favoriteCategoryStyles.titleContainer}>
-                        <TouchableOpacity style={favoriteCategoryStyles.iconheader} onPress={() => console.log('Back !')}>
-                            <Icon source={'chevron-left'} color="#FFF" size={24} />
-                        </TouchableOpacity>
-                        <Text style={[favoriteCategoryStyles.appbarText, { textAlign: 'center' }]}>Danh sách chủ đề</Text>
-                        <Appbar.Action icon="magnify" onPress={_handleSearch} color={'#FFFFFF'} />
+                        <Text style={favoriteCategoryStyles.appbarText}>Đã lưu</Text>
                     </View>
+                    <Appbar.Action icon="magnify" onPress={_handleSearch} color={'#FFFFFF'} />
+                    {/* <Avatar.Image source={{ uri: CONFIG_URL.URL_UPLOAD }} size={30} /> */}
+                    <Avatar.Image source={require(`../../../assets/images/avatar.png`)} size={30} />
+                </Appbar.Header>
+            </View>
+            <View style={[favoriteCategoryStyles.section, { height: HEIGHT / 16 }]}>
+                <Appbar.Header style={favoriteCategoryStyles.header}>
+                    <View style={favoriteCategoryStyles.titleContainer}>
+                        <Text style={favoriteCategoryStyles.appbarText}>Chủ đề đã lưu</Text>
+                    </View>
+                    <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => navigateCategoryScreen()}>
+                        <Text style={favoriteCategoryStyles.seeAllText}>Danh sách chủ đề</Text>
+                        <Icon color='red' source={'chevron-right'} size={24}></Icon>
+                    </TouchableOpacity>
                 </Appbar.Header>
             </View>
 
@@ -155,4 +166,4 @@ const CategoryScreen = ({ navigation }: any) => {
     );
 }
 
-export default CategoryScreen;
+export default FavoriteCategoryScreen;

@@ -36,5 +36,5 @@ export class SCREEN_CONSTANT {
     static DISCOVER = 'discover';
     static SAVE = 'save';
     static PERSONAL = 'personal'
-
+    static FAVORITE_CATEGORY = 'favorite-category';
 }

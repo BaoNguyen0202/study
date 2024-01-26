@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView, Image, ImageBackground, Alert, TouchableOpacity } from 'react-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux-store/store';
-import { Appbar, Avatar, Button, Card, Icon, IconButton, Paragraph, Searchbar, Surface, Text, Title, TouchableRipple } from 'react-native-paper';
+import { ActivityIndicator, Appbar, Avatar, Button, Card, Icon, IconButton, Paragraph, Searchbar, Surface, Text, Title, TouchableRipple } from 'react-native-paper';
 import { useTheme } from '@react-navigation/native'
-import { CONFIG_URL, STATUS_REPONSE_API } from '../../config/configuration';
+import { CONFIG_URL, SCREEN_CONSTANT, STATUS_REPONSE_API } from '../../config/configuration';
 import { HEIGHT, WIDTH } from '../../common/constant';
 import { homeStyles } from './home.style';
 import { UserCategoryEntity, UserCategoryEntitySearch } from '../../model/category-entity';
@@ -16,19 +16,25 @@ import { BlogService } from '../../service/blog-service';
 import { Ultility } from '../../common/ultility';
 
 const HomeScreen = ({ navigation }: any) => {
-    const { colors } = useTheme();
-    const _handleMore = () => console.log('Shown more');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const _handleMore = async (type: any = '') => {
+        if (type === 'CATEGORY') {
+            await Common.dismissKeyboard(() => {
+                navigation.navigate(SCREEN_CONSTANT.FAVORITE_CATEGORY);
+            });
+        }
+    }
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [isSearch, setIsSearch] = useState<boolean>(false);
     const _handleSearch = () => {
         setIsSearch(!isSearch);
     };
     //PageModel
-    const [pageSizeCategory, setPageSizeCategory] = useState<number>(10);
+    const [pageSizeCategory, setPageSizeCategory] = useState<number>(5);
     const [pageIndexCategory, setPageIndexCategory] = useState<number>(1);
-    const [pageSizePodcast, setPageSizePodcast] = useState<number>(10);
+    const [pageSizePodcast, setPageSizePodcast] = useState<number>(5);
     const [pageIndexPodcast, setPageIndexPodcast] = useState<number>(1);
-    const [pageSizeBlogText, setPageSizeBlogText] = useState<number>(10);
+    const [pageSizeBlogText, setPageSizeBlogText] = useState<number>(5);
     const [pageIndexBlogText, setPageIndexBlogText] = useState<number>(1);
     //SetData
     const [dataCategory, setDataCategory] = useState<UserCategoryEntity[]>([]);
@@ -93,39 +99,48 @@ const HomeScreen = ({ navigation }: any) => {
 
     //GetData
     const getDataCategory = async () => {
+        setIsLoading(true);
         categoryRequest.pagingAndSortingModel.pageIndex = pageIndexCategory;
         categoryRequest.pagingAndSortingModel.pageSize = pageSizeCategory;
         await categoryService.getList(categoryRequest).then(res => {
             if (res?.data.code === STATUS_REPONSE_API.OK) {
                 setDataCategory(res.data.data?.items ?? []);
+                setIsLoading(false);
             }
             else {
                 Alert.alert(res?.data.message ?? 'Error');
+                setIsLoading(false);
             }
         });
     }
     const getDataPodcast = async () => {
+        setIsLoading(true);
         podcastRequest.pagingAndSortingModel.pageIndex = pageIndexPodcast;
         podcastRequest.pagingAndSortingModel.pageSize = pageSizePodcast;
         await blogService.getList(podcastRequest).then(res => {
             if (res?.data.code === STATUS_REPONSE_API.OK) {
                 setDataPodcast(res.data.data?.items ?? []);
+                setIsLoading(false);
             }
             else {
                 Alert.alert(res?.data.message ?? 'Error');
+                setIsLoading(false);
             }
         });
     }
 
     const getDataBlogText = async () => {
+        setIsLoading(true);
         blogTextRequest.pagingAndSortingModel.pageIndex = pageIndexBlogText;
         blogTextRequest.pagingAndSortingModel.pageSize = pageSizeBlogText;
         await blogService.getList(blogTextRequest).then(res => {
             if (res?.data.code === STATUS_REPONSE_API.OK) {
                 setDataBlogText(res.data.data?.items ?? []);
+                setIsLoading(false);
             }
             else {
                 Alert.alert(res?.data.message ?? 'Error');
+                setIsLoading(false);
             }
         });
     }
@@ -190,6 +205,12 @@ const HomeScreen = ({ navigation }: any) => {
         console.log(searchQuery);
     }
 
+    const loadMoreCategory = async () => {
+        setPageSizeCategory(pageSizeCategory + 1);
+        getDataCategory();
+        console.log('Load more category ' + pageSizeCategory)
+    }
+
     return (
         <ScrollView style={{
             flex: 1, backgroundColor: '#1A1429', padding: 16
@@ -218,16 +239,17 @@ const HomeScreen = ({ navigation }: any) => {
                     <Card.Cover source={require(`../../assets/images/Frame7.png`)} style={homeStyles.backgroundImage} />
                 </Card>
             </View>
+            {isLoading ? <ActivityIndicator animating={true} color='#FE2083' /> : <></>}
             <View style={homeStyles.section}>
                 <View style={[homeStyles.titleContainer, { height: HEIGHT / 10 }]}>
                     <Text style={homeStyles.appbarText}>Danh sách chủ đề</Text>
-                    <View style={{ flexDirection: 'row' }}>
+                    <TouchableOpacity onPress={() => _handleMore('CATEGORY')} style={{ flexDirection: 'row' }}>
                         <Text style={homeStyles.seeAllText}>Xem tất cả</Text>
                         <Icon color='red' source={'chevron-right'} size={24}></Icon>
-                    </View>
+                    </TouchableOpacity>
                 </View>
                 <View style={{ flex: 1, height: HEIGHT / 5 }}>
-                    <ScrollView horizontal style={{ flexDirection: 'row' }}>
+                    <ScrollView horizontal style={{ flexDirection: 'row' }} onMomentumScrollEnd={() => { loadMoreCategory() }}>
                         {dataCategory.map((category) => (
                             <Surface key={category.id} style={homeStyles.cardCustom} elevation={4}>
                                 <ImageBackground
@@ -250,6 +272,7 @@ const HomeScreen = ({ navigation }: any) => {
                     </ScrollView>
                 </View>
             </View>
+            {isLoading ? <ActivityIndicator animating={true} color='#FE2083' /> : <></>}
             <View style={homeStyles.section}>
                 <View style={[homeStyles.titleContainer, { height: HEIGHT / 9.5 }]}>
                     <Text style={homeStyles.appbarText}>Podcast nổi bật</Text>
@@ -288,6 +311,7 @@ const HomeScreen = ({ navigation }: any) => {
                     </ScrollView>
                 </View>
             </View>
+            {isLoading ? <ActivityIndicator animating={true} color='#FE2083' /> : <></>}
             <View style={homeStyles.section}>
                 <View style={[homeStyles.titleContainer, { height: HEIGHT / 10 }]}>
                     <Text style={homeStyles.appbarText}>Bài đăng nổi bật</Text>

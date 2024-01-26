@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Alert, Platform, Image } from 'react-native';
-import { TextInput, Button, Text, Provider as PaperProvider, Icon } from 'react-native-paper';
+import { TextInput, Button, Text, Provider as PaperProvider, Icon, ActivityIndicator } from 'react-native-paper';
 import { Common } from '../../utils';
 import { useMMKVString } from 'react-native-mmkv';
 import { BaseService } from '../../service/base-service';
@@ -16,6 +16,7 @@ import { useTheme } from '@react-navigation/native'
 import { ImageAssets } from '../../assets';
 
 const LoginScreen = ({ navigation }: any) => {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [fcmToken] = useMMKVString('FCM_TOKEN');
@@ -25,34 +26,35 @@ const LoginScreen = ({ navigation }: any) => {
 
     const handleLogin = async () => {
         try {
+            setIsLoading(true);
             const request: UserAccountLoginEntity = {
                 userName: userName,
                 password: password,
             };
             const response = await userService.postAsync(request);
-
             if (response?.data?.code === STATUS_REPONSE_API.OK) {
                 const result = response.data.data;
                 Common.storage.set('user_info', JSON.stringify(result));
                 Common.storage.set('api_secret', result?.token ?? '');
                 setUserNameStore(result?.userName ?? '');
-
+                setIsLoading(false);
                 await Common.dismissKeyboard(() => {
                     navigation.navigate(SCREEN_CONSTANT.CATEGORY_TYPE);
                 });
             } else {
                 console.error('Login failed:', response?.data.message);
                 Alert.alert('Login Failed', 'response?.data.message');
+                setIsLoading(false);
             }
         } catch (error) {
             console.error('Error during login:', error);
             Alert.alert('Error', 'An error occurred during login. Please try again later.');
+            setIsLoading(false);
         }
     };
     return (
         <View style={styles.container}>
             <Image source={ImageAssets.Bg_Image} style={styles.bgImage} />
-
             <View style={styles.containerContent}>
                 <View style={styles.iconheader}>
                     <Icon source={'chevron-left'} color="#FFF" size={24} />
@@ -92,6 +94,7 @@ const LoginScreen = ({ navigation }: any) => {
                 </View>
             </View>
             <Text style={styles.textNoAcount}>Bạn chưa có tài khoản?<Text style={{ color: '#FE2083' }}>Đăng ký ngay</Text></Text>
+            {isLoading ? <ActivityIndicator animating={true} color='#FE2083' /> : <></>}
         </View>
     );
 };

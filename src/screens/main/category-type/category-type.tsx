@@ -9,6 +9,7 @@ import { Avatar, Button, Chip, Text } from 'react-native-paper';
 import { UserAccountCategoryType } from "../../../model/user-account-entity";
 import { Common } from "../../../utils";
 import { useTheme } from '@react-navigation/native'
+import { WIDTH } from "../../../common/constant";
 
 interface ChipSelected {
     id?: number | null;
@@ -91,7 +92,7 @@ const CategoryTypeScreen = ({ navigation }: any) => {
     }, [pageIndex, pageSize, categoryTypeSearch]);
 
     return (
-        <View style={[styles.headerContainer, { flex: 1, backgroundColor: '#1A1429' }]}>
+        <View style={styles.headerContainer}>
             <Text style={styles.centeredTextTitle}>Hãy lựa chọn chủ đề phù hợp với bạn!</Text>
             <ScrollView contentContainerStyle={styles.container}>
                 {data.map((tag, index) => (
@@ -104,7 +105,7 @@ const CategoryTypeScreen = ({ navigation }: any) => {
                         onPress={() => handleChipPress(tag.id)}
                         avatar={<Avatar.Image source={{ uri: CONFIG_URL.URL_UPLOAD + tag.image }} size={24} />}
                     >
-                        <Text style={{ color: !tag.selected ? '#FE2083' : '#FFFFFF', fontWeight: 'bold' }}>{tag.name}</Text>
+                        <Text style={{ color: !tag.selected ? '#FE2083' : '#FFFFFF', fontWeight: 'bold', maxWidth: 100 }}>{tag.name}</Text>
                     </Chip>
                 ))}
             </ScrollView>
@@ -122,16 +123,22 @@ const CategoryTypeScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
     headerContainer: {
         padding: 16,
+        flex: 1,
+        backgroundColor: '#1A1429',
     },
     container: {
         flexDirection: 'row',
         flexWrap: 'wrap',
+        flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
     },
     chipTag: {
-        margin: 4,
         backgroundColor: '#e3dcab',
         color: '#FFFFFF',
+        margin: 7,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     centeredTextTitle: {
         fontSize: 18,
@@ -141,12 +148,8 @@ const styles = StyleSheet.create({
         padding: 16,
         color: '#FE2083',
     },
-    centeredText: {
-        textAlign: 'center',
-        color: '#FFFFFF',
-    },
+
     selectedChip: {
-        margin: 4,
         backgroundColor: '#FE2083',
     },
     bottomButtonContainer: {
