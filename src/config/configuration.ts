@@ -33,5 +33,8 @@ export class SCREEN_CONSTANT {
     static DETAIL = 'detail';
     static HELLO = 'hello';
     static ROOTNAVIGATION = 'root';
+    static DISCOVER = 'discover';
+    static SAVE = 'save';
+    static PERSONAL = 'personal'
 
 }

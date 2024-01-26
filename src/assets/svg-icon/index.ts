@@ -1,3 +1,6 @@
-// import IconHome from './home.svg';
-// export const SvgComponent = {IconHome}
-// export type SvgIconTypes = keyof typeof SvgComponent;
+// your-svg-file.ts
+import FilterSvg from './filter.svg';
+
+const Filter: string = FilterSvg as any;
+export const SvgComponent = { Filter };
+export type SvgIconTypes = keyof typeof SvgComponent;

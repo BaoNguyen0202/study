@@ -1,16 +1,25 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from '@react-navigation/native';
-import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import { Icon, Text } from 'react-native-paper';
+import { SCREEN_CONSTANT } from '../config/configuration';
+import { Icon } from 'react-native-paper';
 
-const CustomBottomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigation }) => {
-    const { colors } = useTheme();
+const BottomTabDisplay = ({ state, descriptors, navigation }: any) => {
+    const theme = useTheme();
+
+    const icons = ['home-outline', 'newspaper-variant', 'bookmark-minus-outline', 'account-outline'];
 
     return (
-        <View style={styles.tabBar}>
-            {state.routes.map((route, index) => {
+        <View style={styles.container}>
+            {state.routes.map((route: any, index: any) => {
                 const { options } = descriptors[route.key];
+                const label =
+                    options.tabBarLabel !== undefined
+                        ? options.tabBarLabel
+                        : options.title !== undefined
+                            ? options.title
+                            : route.name;
+
                 const isFocused = state.index === index;
 
                 const onPress = () => {
@@ -32,15 +41,27 @@ const CustomBottomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, n
                     });
                 };
 
+                const icon = icons[index]; // Lấy tên icon tương ứng
+
                 return (
-                    <View key={route.key} style={styles.tabItem}>
+                    <TouchableOpacity
+                        key={index}
+                        accessibilityRole="button"
+                        accessibilityState={isFocused ? { selected: true } : undefined}
+                        accessibilityLabel={options.tabBarAccessibilityLabel}
+                        testID={options.tabBarTestID}
+                        onPress={onPress}
+                        onLongPress={onLongPress}
+                        style={styles.tabItem}>
                         <Icon
-                            source={options.tabBarIcon?.({ focused: isFocused, color: colors.primary, size: 24 })}
+                            source={icon}
                             size={24}
-                            color={isFocused ? colors.primary : colors.text}
+                            color={isFocused ? '#FE2083' : '#FFF'}
                         />
-                        <Text style={{ color: isFocused ? colors.primary : colors.text }}>{route.name}</Text>
-                    </View>
+                        <Text style={{ color: isFocused ? '#FE2083' : '#FFF', marginTop: 5 }}>
+                            {label}
+                        </Text>
+                    </TouchableOpacity>
                 );
             })}
         </View>
@@ -48,23 +69,18 @@ const CustomBottomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, n
 };
 
 const styles = StyleSheet.create({
-    tabBar: {
+    container: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        backgroundColor: '#2B233E',
-        opacity: 0.6,
         height: 58,
-        borderRadius: 40,
-        paddingHorizontal: 14,
-        marginHorizontal: 8,
+        borderTopColor: '#ccc',
+        backgroundColor: '#2B233E',
     },
     tabItem: {
         flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
-        paddingVertical: 8,
-        gap: 8,
+        borderRadius: 40,
     },
 });
 
-export default CustomBottomTabBar;
+export default BottomTabDisplay;

@@ -21,13 +21,14 @@ const AppNavigationContainer = () => {
 
     return (
         <NavigationContainer theme={theme}>
-            <Stack.Navigator>
+            <Stack.Navigator initialRouteName="main-tab">
                 <Stack.Screen name={SCREEN_CONSTANT.HELLO} component={HelloScreen} options={{ headerShown: false }} />
                 <Stack.Screen name={SCREEN_CONSTANT.LOG_IN} component={LoginScreen} options={{ headerShown: false }} />
                 <Stack.Screen
                     name={SCREEN_CONSTANT.HOME}
                     component={HomeScreen}
                     options={{ title: 'Home', headerTitleStyle: { color: theme.colors.text }, headerShown: false }}
+
                 />
                 <Stack.Screen
                     name={SCREEN_CONSTANT.MAIN_TAB}
