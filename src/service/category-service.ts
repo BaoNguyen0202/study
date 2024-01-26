@@ -20,4 +20,12 @@ export class CategoryService {
             console.error('Error:', error);
         }
     };
+
+    getListFavorite = async (request: UserCategoryEntitySearch): Promise<AxiosResponse<ResponseAPI<PaginatedList<UserCategoryEntity>>> | undefined | null> => {
+        try {
+            return await axios.post<ResponseAPI<PaginatedList<UserCategoryEntity>>>(CONFIG_URL.API + 'US_Category/get-list-favorite-category-by-user', request);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
 }

@@ -101,7 +101,6 @@ export const homeStyles =
             color: '#FFFFFF',
             justifyContent: 'center',
             alignItems: 'center',
-
         },
         namePodcast: {
             color: '#FFFFFF',

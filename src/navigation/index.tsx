@@ -12,6 +12,8 @@ import { StyleSheet } from 'react-native';
 import HelloScreen from '../screens/login/hello-screen';
 
 import CategoryTypeScreen from '../screens/main/category-type/category-type';
+import FavoriteCategoryScreen from '../screens/main/favorite-category/favorite-category';
+import CategoryScreen from '../screens/main/category/category';
 
 const Stack = createStackNavigator();
 
@@ -42,6 +44,16 @@ const AppNavigationContainer = () => {
                 <Stack.Screen
                     name={SCREEN_CONSTANT.CATEGORY_TYPE}
                     component={CategoryTypeScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name={SCREEN_CONSTANT.FAVORITE_CATEGORY}
+                    component={FavoriteCategoryScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name={SCREEN_CONSTANT.CATEGORY}
+                    component={CategoryScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>
