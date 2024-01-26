@@ -6,6 +6,7 @@ import blog from '../../../blog.json';
 import { UserBlogEntity } from '../../model/blog-entity';
 import Sound from 'react-native-sound';
 import { styles } from './discover.style';
+import { Ultility } from '../../common/ultility';
 
 
 const Discover = () => {
@@ -80,9 +81,13 @@ const Discover = () => {
                             <Text style={[styles.text, { fontSize: 12, marginTop: 4 }]}>{item.incognitoName}</Text>
                         </View>
                     </View>
-                    <View style={{ backgroundColor: '#1B1627', borderRadius: 20, justifyContent: 'center', paddingHorizontal: 8 }}>
-                        <Text style={styles.text}>{item.categoryName}</Text>
+                    <View>
+                        <Text style={{ color: '#FFFFFF', fontSize: 12, textAlign: 'right', paddingHorizontal: 8, paddingBottom: 2 }}> {Ultility.formatDistanceToNow(item.createdAt)}</Text>
+                        <View style={{ backgroundColor: '#1B1627', borderRadius: 20, justifyContent: 'center', paddingHorizontal: 8 }}>
+                            <Text style={styles.text}>{item.categoryName}</Text>
+                        </View>
                     </View>
+
                 </View>
                 <View style={styles.content}>
                     <Text style={[styles.text, styles.textContent]}>{item.content}</Text>

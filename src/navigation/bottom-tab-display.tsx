@@ -73,7 +73,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         height: 58,
         borderTopColor: '#ccc',
-        backgroundColor: '#2B233E',
+        backgroundColor: '#201a2e',
+        opacity: 0.95
     },
     tabItem: {
         flex: 1,
