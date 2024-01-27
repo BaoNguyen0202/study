@@ -77,7 +77,8 @@ export const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     feedback: {
-        fontSize: 10
+        fontSize: 10,
+        marginLeft: 3
     },
     textContent: {
         fontSize: 14

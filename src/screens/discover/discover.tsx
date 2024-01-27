@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, FlatList } from 'react-native'
+import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, FlatList, TouchableHighlight } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Avatar, Card, Icon } from 'react-native-paper';
 import { ImageAssets } from '../../assets';
@@ -9,7 +9,7 @@ import { styles } from './discover.style';
 import { Ultility } from '../../common/ultility';
 
 
-const Discover = () => {
+const Discover = ({ navigation }: any) => {
     const [selectedButton, setSelectedButton] = React.useState('');
     const [selectedTab, setSelectedTab] = useState<string>('post');
     const [data, setData] = useState<UserBlogEntity | null>(null);
@@ -22,48 +22,12 @@ const Discover = () => {
         setSelectedTab(value)
     };
 
-    const playSound = (filePath: any) => {
-        console.log(filePath);
 
-        const sound = new Sound(filePath, undefined, (error) => {
-            if (error) {
-                console.log('Error loading sound: ', error);
-            } else {
-                console.log('Sound loaded successfully');
-                sound.play((success) => {
-                    if (success) {
-                        console.log('Successfully finished playing');
-                    } else {
-                        console.log('Error while playing');
-                    }
-                });
-                setSoundInstance(sound);
-                setIsPlaying(true);
-            }
-        });
-
-        return () => {
-            sound.stop(() => {
-                console.log('Sound stopped');
-            });
-        };
-    };
     const handleStartPlaying = async (filePath: string) => {
         console.log(filePath);
-        try {
-            if (isPlaying && soundInstance) {
-                soundInstance.stop(() => {
-                    console.log('Sound stopped');
-                });
-                setIsPlaying(false);
-                setSoundInstance(null);
-            } else {
-                const stopPlaying = playSound(filePath);
-            }
-        } catch (error) {
-            console.error('Error starting playback:', error);
-        }
+        // navigation.navigate('', { filePath })
     };
+
     const renderItem = ({ item }: any) => {
         return (
             <View style={{ backgroundColor: '#2B233E', borderRadius: 20, marginBottom: 26, padding: 16 }}>
@@ -73,9 +37,11 @@ const Discover = () => {
                         <View style={{ marginLeft: 8 }}>
                             <View style={styles.row}>
                                 <Text style={[styles.text, { fontSize: 14 }]}>{item.incognitoName}</Text>
-                                <View style={{ justifyContent: 'center', marginLeft: 4 }}>
-                                    <Icon color='#FFF' source={'check-decagram'} size={14} />
-                                </View>
+                                {item.incognitoName && (
+                                    <View style={{ justifyContent: 'center', marginLeft: 4 }}>
+                                        <Icon color='#FFF' source={'check-decagram'} size={14} />
+                                    </View>
+                                )}
 
                             </View>
                             <Text style={[styles.text, { fontSize: 12, marginTop: 4 }]}>{item.incognitoName}</Text>
@@ -93,7 +59,22 @@ const Discover = () => {
                     <Text style={[styles.text, styles.textContent]}>{item.content}</Text>
                     {item.path && (
                         <TouchableOpacity onPress={() => handleStartPlaying(item.path)}>
-                            <Text style={[styles.text, { marginTop: 8 }]}>Phát</Text>
+                            <View style={[styles.row, { backgroundColor: '#FFFFFF0D', height: 54, borderRadius: 12, marginTop: 10 }]}>
+                                <View style={{ backgroundColor: '#FE2083', width: 60, borderBottomLeftRadius: 12, borderTopLeftRadius: 12, justifyContent: 'center', alignItems: 'center' }}>
+                                    <View style={{ backgroundColor: '#FFFFFF', width: 40, height: 40, borderRadius: 20, opacity: 0.2, justifyContent: 'center', alignItems: 'center' }}>
+                                        <View style={{ backgroundColor: '#FFFFFF', width: 25, height: 25, borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
+                                        </View>
+                                    </View>
+                                    <Image source={ImageAssets.Polygon1} style={{ position: 'absolute' }} />
+                                </View>
+                                <View style={{ marginLeft: 8, marginVertical: 8 }}>
+                                    <Text style={[styles.text, { fontSize: 14, fontWeight: '500' }]}>Chửi công ty lofi cực chill</Text>
+                                    <View style={[styles.row, { marginTop: 4 }]}>
+                                        <Icon color='#C2C2C2' source={'volume-high'} size={14} />
+                                        <Text style={[{ fontSize: 10, color: '#C2C2C2', justifyContent: 'center', marginLeft: 4 }, styles.feedback]}>00:00:00</Text>
+                                    </View>
+                                </View>
+                            </View>
                         </TouchableOpacity>
                     )}
                 </View>
