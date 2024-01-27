@@ -98,6 +98,78 @@ export const styles = StyleSheet.create({
         backgroundColor: '#1B1627',
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    checkboxItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 8,
+    },
+    checkboxLabel: {
+        marginLeft: 8,
+        fontSize: 16,
+        color: '#FFF',
+    },
+    containerItem: {
+        backgroundColor: '#2B233E',
+        borderRadius: 20,
+        marginBottom: 26,
+        padding: 16
+    },
+    date: {
+        color: '#FFFFFF',
+        fontSize: 12,
+        textAlign: 'right',
+        paddingHorizontal: 8,
+        paddingBottom: 2
+        ,
+    },
+    categoryName: {
+        backgroundColor: '#1B1627',
+        borderRadius: 20,
+        justifyContent: 'center',
+        paddingHorizontal: 8
+    },
+    polligon11: {
+        backgroundColor: '#FFFFFF',
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        opacity: 0.2,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    polligon10: {
+        backgroundColor: '#FFFFFF',
+        width: 25,
+        height: 25,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    leftPlay: {
+        backgroundColor: '#FE2083',
+        width: 60,
+        borderBottomLeftRadius: 12,
+        borderTopLeftRadius: 12,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    menuContainer: {
+        alignContent: 'flex-end',
+        position: 'absolute',
+        top: 90,
+        right: 20,
+        flex: 1
+    },
+    menuContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 16
+    },
+    menuBg: {
+        backgroundColor: '#2B233E',
+        borderRadius: 16,
+        paddingVertical: 16
     }
 
 });

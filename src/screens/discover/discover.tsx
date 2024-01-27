@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, FlatList, TouchableHighlight } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Avatar, Card, Icon } from 'react-native-paper';
+import { Avatar, Card, Checkbox, Icon, Menu } from 'react-native-paper';
 import { ImageAssets } from '../../assets';
 import blog from '../../../blog.json';
 import { UserBlogEntity } from '../../model/blog-entity';
@@ -16,6 +16,12 @@ const Discover = ({ navigation }: any) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [soundInstance, setSoundInstance] = useState<Sound | null>(null);
     const [isFavorite, setIsFavorite] = useState(false);
+    const [isAvatarMenuVisible, setAvatarMenuVisible] = useState(false);
+
+
+    const handleAvatarClick = () => {
+        setAvatarMenuVisible(!isAvatarMenuVisible);
+    };
 
     const handleButtonPress = (value: string) => {
         setSelectedButton(value);
@@ -30,7 +36,7 @@ const Discover = ({ navigation }: any) => {
 
     const renderItem = ({ item }: any) => {
         return (
-            <View style={{ backgroundColor: '#2B233E', borderRadius: 20, marginBottom: 26, padding: 16 }}>
+            <View style={styles.containerItem}>
                 <View style={[styles.row, styles.spcabetwen]}>
                     <View style={styles.row}>
                         <Avatar.Image source={{ uri: item.avatar }} size={40} />
@@ -48,8 +54,8 @@ const Discover = ({ navigation }: any) => {
                         </View>
                     </View>
                     <View>
-                        <Text style={{ color: '#FFFFFF', fontSize: 12, textAlign: 'right', paddingHorizontal: 8, paddingBottom: 2 }}> {Ultility.formatDistanceToNow(item.createdAt)}</Text>
-                        <View style={{ backgroundColor: '#1B1627', borderRadius: 20, justifyContent: 'center', paddingHorizontal: 8 }}>
+                        <Text style={styles.date}> {Ultility.formatDistanceToNow(item.createdAt)}</Text>
+                        <View style={styles.categoryName}>
                             <Text style={styles.text}>{item.categoryName}</Text>
                         </View>
                     </View>
@@ -60,9 +66,9 @@ const Discover = ({ navigation }: any) => {
                     {item.path && (
                         <TouchableOpacity onPress={() => handleStartPlaying(item.path)}>
                             <View style={[styles.row, { backgroundColor: '#FFFFFF0D', height: 54, borderRadius: 12, marginTop: 10 }]}>
-                                <View style={{ backgroundColor: '#FE2083', width: 60, borderBottomLeftRadius: 12, borderTopLeftRadius: 12, justifyContent: 'center', alignItems: 'center' }}>
-                                    <View style={{ backgroundColor: '#FFFFFF', width: 40, height: 40, borderRadius: 20, opacity: 0.2, justifyContent: 'center', alignItems: 'center' }}>
-                                        <View style={{ backgroundColor: '#FFFFFF', width: 25, height: 25, borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
+                                <View style={styles.leftPlay}>
+                                    <View style={styles.polligon11}>
+                                        <View style={styles.polligon10}>
                                         </View>
                                     </View>
                                     <Image source={ImageAssets.Polygon1} style={{ position: 'absolute' }} />
@@ -138,7 +144,9 @@ const Discover = ({ navigation }: any) => {
                 <View style={[styles.header, styles.row]}>
                     <Text style={styles.textHeader}>Bài đăng</Text>
                     <View style={[styles.row]}>
-                        <Avatar.Image style={{ backgroundColor: '#817a87', marginRight: 10 }} source={ImageAssets.filter} size={30} />
+                        <TouchableOpacity onPress={() => handleAvatarClick()}>
+                            <Avatar.Image style={{ backgroundColor: '#817a87', marginRight: 10 }} source={ImageAssets.filter} size={30} />
+                        </TouchableOpacity>
                         <Avatar.Image source={ImageAssets.avatar} size={30} />
                     </View>
                 </View>
@@ -162,9 +170,47 @@ const Discover = ({ navigation }: any) => {
                         <Text style={styles.buttonText}>Nói xấu công ty</Text>
                     </TouchableOpacity>
                 </View>
+
+
                 {renderContent()}
             </View>
-        </SafeAreaView>
+            {isAvatarMenuVisible && (
+                <View style={styles.menuContainer}>
+                    <View style={styles.menuBg}>
+                        <View style={styles.menuContent}>
+                            <Checkbox.Android
+                                status={'checked'}
+                                onPress={() => {
+                                    // Xử lý khi checkbox được nhấn
+                                }}
+                                color='#FE2083'
+                            />
+                            <Text style={styles.text}>Văn bản</Text>
+                        </View>
+                        <View style={styles.menuContent}>
+                            <Checkbox.Android
+                                status={'checked'}
+                                onPress={() => {
+                                    // Xử lý khi checkbox được nhấn
+                                }}
+                                color='#FE2083'
+                            />
+                            <Text style={styles.text}>Âm thanh</Text>
+                        </View>
+                        <View style={styles.menuContent}>
+                            <Checkbox.Android
+                                status={'checked'}
+                                onPress={() => {
+                                    // Xử lý khi checkbox được nhấn
+                                }}
+                                color='#FE2083'
+                            />
+                            <Text style={styles.text}>Hình ảnh</Text>
+                        </View>
+                    </View>
+                </View>
+            )}
+        </SafeAreaView >
     )
 }
 
