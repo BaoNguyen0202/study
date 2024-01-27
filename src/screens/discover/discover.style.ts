@@ -31,7 +31,8 @@ export const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginVertical: 26
+        marginVertical: 26,
+        marginTop: -10
     },
     button: {
         flex: 1,
