@@ -37,4 +37,5 @@ export class SCREEN_CONSTANT {
     static SAVE = 'save';
     static PERSONAL = 'personal'
     static FAVORITE_CATEGORY = 'favorite-category';
+    static RECORD_PLAYER = 'record-player';
 }

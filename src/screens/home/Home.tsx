@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView, Image, ImageBackground, Alert, TouchableOpacity } from 'react-native';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux-store/store';
 import { ActivityIndicator, Appbar, Avatar, Button, Card, Icon, IconButton, Paragraph, Searchbar, Surface, Text, Title, TouchableRipple } from 'react-native-paper';
-import { useTheme } from '@react-navigation/native'
 import { CONFIG_URL, SCREEN_CONSTANT, STATUS_REPONSE_API } from '../../config/configuration';
 import { HEIGHT, WIDTH } from '../../common/constant';
 import { homeStyles } from './home.style';
@@ -14,6 +11,7 @@ import { PaginationEntity } from '../../model/pagination-entity';
 import { UserBlogEntity, UserBlogEntitySearch } from '../../model/blog-entity';
 import { BlogService } from '../../service/blog-service';
 import { Ultility } from '../../common/ultility';
+import { styles } from '../discover/discover.style';
 
 const HomeScreen = ({ navigation }: any) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -23,7 +21,18 @@ const HomeScreen = ({ navigation }: any) => {
                 navigation.navigate(SCREEN_CONSTANT.FAVORITE_CATEGORY);
             });
         }
+        if (type === 'PODCAST') {
+            await Common.dismissKeyboard(() => {
+                navigation.navigate(SCREEN_CONSTANT.RECORD_PLAYER);
+            });
+        }
+        if (type === 'BLOG') {
+            await Common.dismissKeyboard(() => {
+                navigation.navigate(SCREEN_CONSTANT.DISCOVER);
+            });
+        }
     }
+    const discoverStyles = styles;
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [isSearch, setIsSearch] = useState<boolean>(false);
     const _handleSearch = () => {
@@ -276,10 +285,10 @@ const HomeScreen = ({ navigation }: any) => {
             <View style={homeStyles.section}>
                 <View style={[homeStyles.titleContainer, { height: HEIGHT / 9.5 }]}>
                     <Text style={homeStyles.appbarText}>Podcast nổi bật</Text>
-                    <View style={{ flexDirection: 'row' }}>
+                    <TouchableOpacity onPress={() => _handleMore('PODCAST')} style={{ flexDirection: 'row' }}>
                         <Text style={homeStyles.seeAllText}>Xem tất cả</Text>
-                        <Icon color='#FE2083' source={'chevron-right'} size={24}></Icon>
-                    </View>
+                        <Icon color='red' source={'chevron-right'} size={24}></Icon>
+                    </TouchableOpacity>
                 </View>
                 <View style={{ flex: 1, height: HEIGHT / 4 }}>
                     <ScrollView horizontal style={{ flexDirection: 'row' }}>
@@ -293,13 +302,13 @@ const HomeScreen = ({ navigation }: any) => {
                                 <View style={homeStyles.cardContent}>
                                     <Text style={homeStyles.namePodcast}>{podcast.name}</Text>
                                     <View style={{ flexDirection: 'row' }}>
-                                        <Icon color='#FFFFFF' source={'play'} size={15}></Icon>
-                                        <Text style={{ color: '#FFFFFF' }}> 00:05:00</Text>
+                                        <Icon color='#C2C2C2' source={'volume-high'} size={14}></Icon>
+                                        <Text style={{ color: '#C2C2C2' }}> 00:05:00</Text>
                                     </View>
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                         <View style={{ flexDirection: 'row' }}>
-                                            <Icon color='#FFFFFF' source={'heart'} size={15}></Icon>
-                                            <Text style={{ color: '#FFFFFF' }}> {podcast.totalLike ?? 0}</Text>
+                                            <Icon color='#C2C2C2' source={'heart'} size={14}></Icon>
+                                            <Text style={{ color: '#C2C2C2' }}> {podcast.totalLike ?? 0}</Text>
                                         </View>
                                         <TouchableOpacity style={podcast.selected ? homeStyles.heartSelected : homeStyles.heartDisabled} onPress={() => saveFavoritePodcast(podcast)}>
                                             <Icon color='#FFFFFF' source={'heart'} size={15}></Icon>
@@ -312,52 +321,60 @@ const HomeScreen = ({ navigation }: any) => {
                 </View>
             </View>
             {isLoading ? <ActivityIndicator animating={true} color='#FE2083' /> : <></>}
-            <View style={homeStyles.section}>
+            <View style={[homeStyles.section, { marginBottom: 30 }]}>
                 <View style={[homeStyles.titleContainer, { height: HEIGHT / 10 }]}>
                     <Text style={homeStyles.appbarText}>Bài đăng nổi bật</Text>
-                    <View style={{ flexDirection: 'row' }}>
+                    <TouchableOpacity onPress={() => _handleMore('BLOG')} style={{ flexDirection: 'row' }}>
                         <Text style={homeStyles.seeAllText}>Xem tất cả</Text>
-                        <Icon color='#FE2083' source={'chevron-right'} size={24}></Icon>
-                    </View>
+                        <Icon color='red' source={'chevron-right'} size={24}></Icon>
+                    </TouchableOpacity>
                 </View>
                 <View style={{ flex: 1, height: HEIGHT / 4.5 }}>
                     {dataBlogText.map((blogText) => (
-                        <Surface key={blogText.id} style={homeStyles.cardCustomPost} elevation={4}>
-                            <View style={homeStyles.cardContent}>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <View style={{ flexDirection: 'row', left: 0 }}>
-                                        <Avatar.Image source={blogText.isIncognito ? require(`../../assets/images/avatar.png`) : { uri: CONFIG_URL.URL_UPLOAD + blogText.avatar }} size={30} />
-                                        <Text style={{ color: '#FFFFFF', fontWeight: 'bold', fontSize: 18, left: 0 }}> {blogText.isIncognito ? blogText.incognitoName : blogText.fullName} <Image source={require(`../../assets/images/Check.png`)} width={20} height={20} /></Text>
-                                    </View>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Text style={{ color: '#FFFFFF', fontSize: 12 }}> {Ultility.formatDistanceToNow(blogText.createdAt)}</Text>
-                                    </View>
-                                </View>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Text style={{ color: '#FFFFFF', marginLeft: 30 }}> {blogText.isIncognito ? 'Ẩn danh' : blogText.userName}</Text>
-                                    </View>
-                                    <View style={{ bottom: 10, backgroundColor: '#000000', marginRight: 5, borderRadius: 10 }}>
-                                        <Text style={{ color: '#FFFFFF', padding: 5 }}> {blogText.categoryName}</Text>
-                                    </View>
-                                </View>
-                                {renderBlogTextContent(blogText)}
-                                <View style={homeStyles.cardContent}>
-                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}>
-                                        <View style={{ flexDirection: 'row' }}>
-                                            <Icon color={'#FFFFFF'} source={'heart'} size={15}></Icon>
-                                            <Text style={{ color: '#FFFFFF' }}> {blogText.totalLike}    </Text>
-
-                                            <Icon color='#FFFFFF' source={'comment'} size={15}></Icon>
-                                            <Text style={{ color: '#FFFFFF' }}> {blogText.totalComment}</Text>
+                        <View key={blogText.id} style={discoverStyles.containerItem}>
+                            <View style={[discoverStyles.row, discoverStyles.spcabetwen]}>
+                                <View style={discoverStyles.row}>
+                                    <Avatar.Image source={blogText.isIncognito ? require(`../../assets/images/avatar.png`) : { uri: CONFIG_URL.URL_UPLOAD + blogText.avatar }} size={40} />
+                                    <View style={{ marginLeft: 8 }}>
+                                        <View style={discoverStyles.row}>
+                                            <Text style={[discoverStyles.text, { fontSize: 14 }]}>{blogText.isIncognito ? blogText.incognitoName : blogText.fullName}</Text>
+                                            {blogText.incognitoName && (
+                                                <View style={{ justifyContent: 'center', marginLeft: 4 }}>
+                                                    <Icon color='#FFF' source={'check-decagram'} size={14} />
+                                                </View>
+                                            )}
                                         </View>
-                                        <TouchableOpacity style={blogText.selected ? homeStyles.heartSelected : homeStyles.heartDisabled} onPress={() => saveFavoriteBlogText(blogText)}>
-                                            <Icon color='#FFFFFF' source={'heart'} size={15}></Icon>
-                                        </TouchableOpacity>
+                                        <Text style={[discoverStyles.text, { fontSize: 12, marginTop: 4 }]}>{blogText.isIncognito ? 'Ẩn danh' : blogText.userName}</Text>
+                                    </View>
+                                </View>
+                                <View>
+                                    <Text style={discoverStyles.date}> {Ultility.formatDistanceToNow(blogText.createdAt)}</Text>
+                                    <View style={discoverStyles.categoryName}>
+                                        <Text style={discoverStyles.text}>{blogText.categoryName}</Text>
                                     </View>
                                 </View>
                             </View>
-                        </Surface>
+                            <View style={discoverStyles.content}>
+                                {renderBlogTextContent(blogText)}
+                            </View>
+                            <View style={discoverStyles.footer}>
+                                <View style={[discoverStyles.row, discoverStyles.spcabetwen]}>
+                                    <View style={[discoverStyles.row, { alignSelf: 'center' }]}>
+                                        <View style={discoverStyles.row}>
+                                            <Icon color='#C2C2C2' source={'cards-heart'} size={14} />
+                                            <Text style={[discoverStyles.text, discoverStyles.feedback]}>{blogText.totalLike}</Text>
+                                        </View>
+                                        <View style={[discoverStyles.row, { marginLeft: 8 }]}>
+                                            <Icon color='#C2C2C2' source={'dots-horizontal-circle'} size={14} />
+                                            <Text style={[discoverStyles.text, discoverStyles.feedback]}>{blogText.totalComment}</Text>
+                                        </View>
+                                    </View>
+                                    <TouchableOpacity style={blogText.selected ? homeStyles.heartSelected : homeStyles.heartDisabled} onPress={() => saveFavoriteBlogText(blogText)}>
+                                        <Icon color='#FFFFFF' source={'heart'} size={15}></Icon>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
                     ))}
                 </View>
             </View>

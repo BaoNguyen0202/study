@@ -9,6 +9,7 @@ import Personal from '../screens/personal/personal';
 import { Icon } from 'react-native-paper';
 import BottomTabDisplay from './bottom-tab-display';
 import { SCREEN_CONSTANT } from '../config/configuration';
+import FavoriteCategoryScreen from '../screens/main/favorite-category/favorite-category';
 const Tab = createBottomTabNavigator();
 
 const MainTab = () => {
@@ -24,8 +25,8 @@ const MainTab = () => {
                 options={{
                     tabBarLabel: 'Khám phá',
                 }} />
-            <Tab.Screen name={SCREEN_CONSTANT.SAVE}
-                component={Save}
+            <Tab.Screen name={SCREEN_CONSTANT.FAVORITE_CATEGORY}
+                component={FavoriteCategoryScreen}
                 options={{
                     tabBarLabel: 'Đã lưu',
                 }} />

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, FlatList, TouchableHighlight } from 'react-native'
+import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, FlatList, TouchableHighlight, ImageBackground } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Avatar, Card, Checkbox, Icon, Menu } from 'react-native-paper';
 import { ImageAssets } from '../../assets';
@@ -7,17 +7,29 @@ import { UserBlogEntity } from '../../model/blog-entity';
 import Sound from 'react-native-sound';
 import { styles } from './discover.style';
 import { Ultility } from '../../common/ultility';
+import { CONFIG_URL } from '../../config/configuration';
+import { HEIGHT } from '../../common/constant';
 
+interface TypeCheckboxFilter {
+    id: number,
+    name: string,
+    checked: boolean | null
+}
 
 const Discover = ({ navigation }: any) => {
-    const [selectedButton, setSelectedButton] = React.useState('');
+    const [selectedButton, setSelectedButton] = useState('');
     const [selectedTab, setSelectedTab] = useState<string>('post');
     const [data, setData] = useState<UserBlogEntity | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [soundInstance, setSoundInstance] = useState<Sound | null>(null);
     const [isFavorite, setIsFavorite] = useState(false);
     const [isAvatarMenuVisible, setAvatarMenuVisible] = useState(false);
-
+    const listTypeCheckBoxFilter: TypeCheckboxFilter[] = [
+        { id: 0, name: 'Văn bản', checked: true },
+        { id: 2, name: 'Âm thanh', checked: true },
+        { id: 3, name: 'Hình ảnh', checked: true },
+    ]
+    const [typeCheckBoxFilters, setDataCheckBoxFilter] = useState<TypeCheckboxFilter[]>(listTypeCheckBoxFilter);
 
     const handleAvatarClick = () => {
         setAvatarMenuVisible(!isAvatarMenuVisible);
@@ -27,7 +39,6 @@ const Discover = ({ navigation }: any) => {
         setSelectedButton(value);
         setSelectedTab(value)
     };
-
 
     const handleStartPlaying = async (filePath: string) => {
         console.log(filePath);
@@ -42,15 +53,14 @@ const Discover = ({ navigation }: any) => {
                         <Avatar.Image source={{ uri: item.avatar }} size={40} />
                         <View style={{ marginLeft: 8 }}>
                             <View style={styles.row}>
-                                <Text style={[styles.text, { fontSize: 14 }]}>{item.incognitoName}</Text>
+                                <Text style={[styles.text, { fontSize: 14 }]}>{item.isIncognito ? item.incognitoName : item.fullName}</Text>
                                 {item.incognitoName && (
                                     <View style={{ justifyContent: 'center', marginLeft: 4 }}>
                                         <Icon color='#FFF' source={'check-decagram'} size={14} />
                                     </View>
                                 )}
-
                             </View>
-                            <Text style={[styles.text, { fontSize: 12, marginTop: 4 }]}>{item.incognitoName}</Text>
+                            <Text style={[styles.text, { fontSize: 12, marginTop: 4 }]}>{item.isIncognito ? 'Ẩn danh' : item.userName}</Text>
                         </View>
                     </View>
                     <View>
@@ -63,14 +73,21 @@ const Discover = ({ navigation }: any) => {
                 </View>
                 <View style={styles.content}>
                     <Text style={[styles.text, styles.textContent]}>{item.content}</Text>
-                    {item.path && (
+                    {item.type == 3 && item.poster && (
+                        < Image source={{ uri: CONFIG_URL.URL_UPLOAD + item.poster }} style={styles.poster} />
+                    )}
+                    {item.path && item.type == 2 && (
                         <TouchableOpacity onPress={() => handleStartPlaying(item.path)}>
                             <View style={[styles.row, { backgroundColor: '#FFFFFF0D', height: 54, borderRadius: 12, marginTop: 10 }]}>
-                                <View style={styles.leftPlay}>
-                                    <View style={styles.polligon11}>
-                                        <View style={styles.polligon10}>
+                                <View style={[styles.leftPlay]}>
+                                    <ImageBackground
+                                        source={{ uri: CONFIG_URL.URL_UPLOAD + item.poster }}
+                                    >
+                                        <View style={styles.polligon11}>
+                                            <View style={styles.polligon10}>
+                                            </View>
                                         </View>
-                                    </View>
+                                    </ImageBackground>
                                     <Image source={ImageAssets.Polygon1} style={{ position: 'absolute' }} />
                                 </View>
                                 <View style={{ marginLeft: 8, marginVertical: 8 }}>
@@ -88,11 +105,11 @@ const Discover = ({ navigation }: any) => {
                     <View style={[styles.row, styles.spcabetwen]}>
                         <View style={[styles.row, { alignSelf: 'center' }]}>
                             <View style={styles.row}>
-                                <Icon color='#FFF' source={'cards-heart'} size={14} />
+                                <Icon color='#C2C2C2' source={'cards-heart'} size={14} />
                                 <Text style={[styles.text, styles.feedback]}>{item.totalLike}</Text>
                             </View>
                             <View style={[styles.row, { marginLeft: 8 }]}>
-                                <Icon color='#FFF' source={'dots-horizontal-circle'} size={14} />
+                                <Icon color='#C2C2C2' source={'dots-horizontal-circle'} size={14} />
                                 <Text style={[styles.text, styles.feedback]}>{item.totalComment}</Text>
                             </View>
                         </View>
@@ -104,6 +121,7 @@ const Discover = ({ navigation }: any) => {
             </View>
         );
     }
+
     const renderContent = () => {
         let data = blog.data.items;
 
@@ -136,10 +154,10 @@ const Discover = ({ navigation }: any) => {
     };
     useEffect(() => {
     }, []);
+
     return (
         <SafeAreaView style={styles.container}>
             <Image source={ImageAssets.Bg_Image} style={styles.bgImage} />
-
             <View style={styles.containerContent}>
                 <View style={[styles.header, styles.row]}>
                     <Text style={styles.textHeader}>Bài đăng</Text>
@@ -170,43 +188,27 @@ const Discover = ({ navigation }: any) => {
                         <Text style={styles.buttonText}>Nói xấu công ty</Text>
                     </TouchableOpacity>
                 </View>
-
-
                 {renderContent()}
             </View>
             {isAvatarMenuVisible && (
                 <View style={styles.menuContainer}>
                     <View style={styles.menuBg}>
-                        <View style={styles.menuContent}>
-                            <Checkbox.Android
-                                status={'checked'}
-                                onPress={() => {
-                                    // Xử lý khi checkbox được nhấn
-                                }}
-                                color='#FE2083'
-                            />
-                            <Text style={styles.text}>Văn bản</Text>
-                        </View>
-                        <View style={styles.menuContent}>
-                            <Checkbox.Android
-                                status={'checked'}
-                                onPress={() => {
-                                    // Xử lý khi checkbox được nhấn
-                                }}
-                                color='#FE2083'
-                            />
-                            <Text style={styles.text}>Âm thanh</Text>
-                        </View>
-                        <View style={styles.menuContent}>
-                            <Checkbox.Android
-                                status={'checked'}
-                                onPress={() => {
-                                    // Xử lý khi checkbox được nhấn
-                                }}
-                                color='#FE2083'
-                            />
-                            <Text style={styles.text}>Hình ảnh</Text>
-                        </View>
+                        {typeCheckBoxFilters.map((type) => (
+                            <View style={styles.menuContent}>
+                                <Checkbox.Android
+                                    status={type.checked == true ? 'checked' : 'unchecked'}
+                                    onPress={() => {
+                                        setDataCheckBoxFilter((prevTypes) =>
+                                            prevTypes.map((c) =>
+                                                c.id === type.id ? { ...c, checked: !c.checked } : c
+                                            )
+                                        );
+                                    }}
+                                    color={type.checked ? '#FE2083' : ''}
+                                />
+                                <Text style={styles.text}>{type.name}</Text>
+                            </View>
+                        ))}
                     </View>
                 </View>
             )}

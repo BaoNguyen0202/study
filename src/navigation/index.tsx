@@ -14,6 +14,7 @@ import HelloScreen from '../screens/login/hello-screen';
 import CategoryTypeScreen from '../screens/main/category-type/category-type';
 import FavoriteCategoryScreen from '../screens/main/favorite-category/favorite-category';
 import CategoryScreen from '../screens/main/category/category';
+import RecordPlayerScreen from '../screens/main/record-player/record-player';
 
 const Stack = createStackNavigator();
 
@@ -23,7 +24,7 @@ const AppNavigationContainer = () => {
 
     return (
         <NavigationContainer theme={theme}>
-            <Stack.Navigator initialRouteName="main-tab">
+            <Stack.Navigator initialRouteName="hello">
                 <Stack.Screen name={SCREEN_CONSTANT.HELLO} component={HelloScreen} options={{ headerShown: false }} />
                 <Stack.Screen name={SCREEN_CONSTANT.LOG_IN} component={LoginScreen} options={{ headerShown: false }} />
                 <Stack.Screen
@@ -56,6 +57,11 @@ const AppNavigationContainer = () => {
                 <Stack.Screen
                     name={SCREEN_CONSTANT.CATEGORY}
                     component={CategoryScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name={SCREEN_CONSTANT.RECORD_PLAYER}
+                    component={RecordPlayerScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

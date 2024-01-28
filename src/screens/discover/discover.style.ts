@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { HEIGHT } from "../../common/constant";
 
 export const styles = StyleSheet.create({
     container: {
@@ -14,7 +15,7 @@ export const styles = StyleSheet.create({
     containerContent: {
         flex: 1,
         marginHorizontal: 24,
-        marginTop: 51
+        marginTop: 40
     },
     textHeader: {
         color: '#FFFFFF',
@@ -148,7 +149,7 @@ export const styles = StyleSheet.create({
         alignItems: 'center'
     },
     leftPlay: {
-        backgroundColor: '#FE2083',
+        // backgroundColor: '#FE2083',
         width: 60,
         borderBottomLeftRadius: 12,
         borderTopLeftRadius: 12,
@@ -171,6 +172,11 @@ export const styles = StyleSheet.create({
         backgroundColor: '#2B233E',
         borderRadius: 16,
         paddingVertical: 16
+    },
+    poster: {
+        width: '100%',
+        height: HEIGHT / 4,
+        marginTop: 10,
+        borderRadius: 12
     }
-
 });
