@@ -14,6 +14,8 @@ import FavoriteCategoryScreen from '../screens/main/favorite-category/favorite-c
 import CategoryScreen from '../screens/main/category/category';
 import RecordPlayerScreen from '../screens/main/record-player/record-player';
 import BlogScreen from '../screens/main/blog/blog';
+import TrackListScreen from '../screens/main/track-list/track-list';
+import PodcastCategoryScreen from '../screens/main/category/podcast-category';
 
 const Stack = createStackNavigator();
 
@@ -23,7 +25,7 @@ const AppNavigationContainer = () => {
 
     return (
         <NavigationContainer theme={theme}>
-            <Stack.Navigator initialRouteName="hello">
+            <Stack.Navigator initialRouteName={SCREEN_CONSTANT.HELLO}>
                 <Stack.Screen name={SCREEN_CONSTANT.HELLO} component={HelloScreen} options={{ headerShown: false }} />
                 <Stack.Screen name={SCREEN_CONSTANT.LOG_IN} component={LoginScreen} options={{ headerShown: false }} />
                 <Stack.Screen
@@ -64,6 +66,16 @@ const AppNavigationContainer = () => {
                 <Stack.Screen
                     name={SCREEN_CONSTANT.BLOG}
                     component={BlogScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name={SCREEN_CONSTANT.TRACK_LIST}
+                    component={TrackListScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name={SCREEN_CONSTANT.PODCACST_CATEGORY}
+                    component={PodcastCategoryScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

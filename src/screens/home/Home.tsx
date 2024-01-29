@@ -23,7 +23,7 @@ const HomeScreen = ({ navigation }: any) => {
         }
         if (type === 'PODCAST') {
             await Common.dismissKeyboard(() => {
-                navigation.navigate(SCREEN_CONSTANT.RECORD_PLAYER);
+                navigation.navigate(SCREEN_CONSTANT.PODCACST_CATEGORY);
             });
         }
         if (type === 'BLOG') {

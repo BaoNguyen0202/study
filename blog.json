@@ -12,7 +12,7 @@
                 "poster": null,
                 "code": "001",
                 "userAccountId": "cde87cf5-06de-47ac-9574-ac22d89c9432",
-                "userAccountName": null,
+                "userName": null,
                 "avatar": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNvnKSp_yZT4Q5ciyjFGH-rxPJwp2L42BWMuG5YeNJVg&s",
                 "content": "Phần mềm quá tuyệt vời",
                 "hashtag": "#congnghethongtin",
@@ -34,14 +34,15 @@
                 "updatedAt": null,
                 "deletedAt": null,
                 "isSoftDeleted": null,
-                "path": null
+                "path": null,
+                "fullName": null
             },
             {
                 "id": "3fa85f64-5717-4562-b3fc-2c963f66afa7",
                 "poster": null,
                 "code": "002",
                 "userAccountId": "cde87cf5-06de-47ac-9574-ac22d89c9432",
-                "userAccountName": null,
+                "userName": null,
                 "avatar": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNvnKSp_yZT4Q5ciyjFGH-rxPJwp2L42BWMuG5YeNJVg&s",
                 "content": "Công ty chán òm. Toàn ngồi chơi",
                 "hashtag": "#reviewcongty",
@@ -63,14 +64,15 @@
                 "updatedAt": null,
                 "deletedAt": null,
                 "isSoftDeleted": null,
-                "path": null
+                "path": null,
+                "fullName": null
             },
             {
                 "id": "3fa85f64-5717-4562-b3fc-2c963f66afa8",
                 "poster": "CategoryType_Podcast.jpg",
                 "code": "001",
                 "userAccountId": "cde87cf5-06de-47ac-9574-ac22d89c9432",
-                "userAccountName": null,
+                "userName": null,
                 "avatar": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNvnKSp_yZT4Q5ciyjFGH-rxPJwp2L42BWMuG5YeNJVg&s",
                 "content": "Công ty chán òm. Toàn ngồi chơi",
                 "hashtag": "#reviewcongty",
@@ -92,14 +94,15 @@
                 "updatedAt": null,
                 "deletedAt": null,
                 "isSoftDeleted": null,
-                "path": "audio_1704944630833.mp3"
+                "path": "audio_1704944630833.mp3",
+                "fullName": null
             },
             {
                 "id": "3fa85f64-5717-4562-b3fc-2c963f66afa9",
                 "poster": "CategoryType_Podcast.jpg",
                 "code": "002",
                 "userAccountId": "cde87cf5-06de-47ac-9574-ac22d89c9432",
-                "userAccountName": null,
+                "userName": null,
                 "avatar": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNvnKSp_yZT4Q5ciyjFGH-rxPJwp2L42BWMuG5YeNJVg&s",
                 "content": "Công ty chán òm. Toàn ngồi chơi",
                 "hashtag": "#reviewcongty",
@@ -121,14 +124,15 @@
                 "updatedAt": null,
                 "deletedAt": null,
                 "isSoftDeleted": null,
-                "path": null
+                "path": null,
+                "fullName": null
             },
             {
                 "id": "3fa85f64-5717-4562-b3fc-2c963f66afb1",
                 "poster": "CategoryType_Podcast.jpg",
                 "code": "001",
                 "userAccountId": "cde87cf5-06de-47ac-9574-ac22d89c9432",
-                "userAccountName": "admin",
+                "userName": "admin",
                 "avatar": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNvnKSp_yZT4Q5ciyjFGH-rxPJwp2L42BWMuG5YeNJVg&s",
                 "content": "Hello world !",
                 "hashtag": "#congnghethongtin",
@@ -150,14 +154,15 @@
                 "updatedAt": null,
                 "deletedAt": null,
                 "isSoftDeleted": null,
-                "path": "audio_1704944630833.mp3"
+                "path": "audio_1704944630833.mp3",
+                "fullName": "Nguyễn Ngọc Tiến"
             },
             {
                 "id": "3fa85f64-5717-4562-b3fc-2c963f66afb2",
                 "poster": "CategoryType_Podcast.jpg",
                 "code": "002",
                 "userAccountId": "cde87cf5-06de-47ac-9574-ac22d89c9432",
-                "userAccountName": "admin",
+                "userName": "admin",
                 "avatar": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNvnKSp_yZT4Q5ciyjFGH-rxPJwp2L42BWMuG5YeNJVg&s",
                 "content": "Bài viết bằng hình ảnh",
                 "hashtag": "#congnghethongtin",
@@ -179,7 +184,8 @@
                 "updatedAt": null,
                 "deletedAt": null,
                 "isSoftDeleted": null,
-                "path": null
+                "path": null,
+                "fullName": "Nguyễn Ngọc Tiến"
             }
         ]
     }

@@ -1,5 +1,6 @@
 export class CONFIG_URL {
     static API = 'https://tientulac.bsite.net/api/';
+    static BASE_URL = 'https://tientulac.bsite.net/';
     static TITLE = 'MOBILE-APP';
     static URL_UPLOAD = 'https://tientulac.bsite.net/api/Upload/GetImage?imgName=';
     static URL_RECORD = 'https://tientulac.bsite.net/api/Upload/GetRecord?fileName=';
@@ -38,4 +39,6 @@ export class SCREEN_CONSTANT {
     static PERSONAL = 'personal'
     static FAVORITE_CATEGORY = 'favorite-category';
     static RECORD_PLAYER = 'record-player';
+    static TRACK_LIST = 'track-list';
+    static PODCACST_CATEGORY = 'podcast-category';
 }
