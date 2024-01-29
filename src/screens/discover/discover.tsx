@@ -7,8 +7,9 @@ import { UserBlogEntity } from '../../model/blog-entity';
 import Sound from 'react-native-sound';
 import { styles } from './discover.style';
 import { Ultility } from '../../common/ultility';
-import { CONFIG_URL } from '../../config/configuration';
+import { CONFIG_URL, SCREEN_CONSTANT } from '../../config/configuration';
 import { HEIGHT } from '../../common/constant';
+import { Common } from '../../utils';
 
 interface TypeCheckboxFilter {
     id: number,
@@ -45,32 +46,55 @@ const Discover = ({ navigation }: any) => {
         // navigation.navigate('', { filePath })
     };
 
+    const navigateBlogDetail = async (item: UserBlogEntity) => {
+        await Common.dismissKeyboard(() => {
+            navigation.navigate(SCREEN_CONSTANT.BLOG, item);
+        });
+    }
+
+    const deleteBlog = async (item: UserBlogEntity) => {
+        console.log(item.id);
+    }
+
     const renderItem = ({ item }: any) => {
         return (
             <View style={styles.containerItem}>
-                <View style={[styles.row, styles.spcabetwen]}>
-                    <View style={styles.row}>
-                        <Avatar.Image source={{ uri: item.avatar }} size={40} />
-                        <View style={{ marginLeft: 8 }}>
-                            <View style={styles.row}>
-                                <Text style={[styles.text, { fontSize: 14 }]}>{item.isIncognito ? item.incognitoName : item.fullName}</Text>
-                                {item.incognitoName && (
-                                    <View style={{ justifyContent: 'center', marginLeft: 4 }}>
-                                        <Icon color='#FFF' source={'check-decagram'} size={14} />
-                                    </View>
-                                )}
-                            </View>
-                            <Text style={[styles.text, { fontSize: 12, marginTop: 4 }]}>{item.isIncognito ? 'Ẩn danh' : item.userName}</Text>
+                {item.userAccountId == Ultility.getUserInfo().id && (
+                    <View style={[styles.row, styles.spcabetwen, { marginBottom: 5 }]}>
+                        <View style={styles.row}>
                         </View>
-                    </View>
-                    <View>
-                        <Text style={styles.date}> {Ultility.formatDistanceToNow(item.createdAt)}</Text>
-                        <View style={styles.categoryName}>
-                            <Text style={styles.text}>{item.categoryName}</Text>
-                        </View>
-                    </View>
+                        <TouchableOpacity onPress={() => deleteBlog(item)}>
 
-                </View>
+                            <View>
+                                <Icon color='#FFF' source={'delete'} size={17} />
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                )}
+                <TouchableOpacity onPress={() => navigateBlogDetail(item)}>
+                    <View style={[styles.row, styles.spcabetwen]}>
+                        <View style={styles.row}>
+                            <Avatar.Image source={{ uri: item.avatar }} size={40} />
+                            <View style={{ marginLeft: 8 }}>
+                                <View style={styles.row}>
+                                    <Text style={[styles.text, { fontSize: 14 }]}>{item.isIncognito ? item.incognitoName : item.fullName}</Text>
+                                    {item.incognitoName && (
+                                        <View style={{ justifyContent: 'center', marginLeft: 4 }}>
+                                            <Icon color='#FFF' source={'check-decagram'} size={14} />
+                                        </View>
+                                    )}
+                                </View>
+                                <Text style={[styles.text, { fontSize: 12, marginTop: 4 }]}>{item.isIncognito ? 'Ẩn danh' : item.userName}</Text>
+                            </View>
+                        </View>
+                        <View>
+                            <Text style={styles.date}> {Ultility.formatDistanceToNow(item.createdAt)}</Text>
+                            <View style={styles.categoryName}>
+                                <Text style={styles.text}>{item.categoryName}</Text>
+                            </View>
+                        </View>
+                    </View>
+                </TouchableOpacity >
                 <View style={styles.content}>
                     <Text style={[styles.text, styles.textContent]}>{item.content}</Text>
                     {item.type == 3 && item.poster && (
@@ -194,7 +218,7 @@ const Discover = ({ navigation }: any) => {
                 <View style={styles.menuContainer}>
                     <View style={styles.menuBg}>
                         {typeCheckBoxFilters.map((type) => (
-                            <View style={styles.menuContent}>
+                            <View key={type.id} style={styles.menuContent}>
                                 <Checkbox.Android
                                     status={type.checked == true ? 'checked' : 'unchecked'}
                                     onPress={() => {

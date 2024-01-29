@@ -1,6 +1,8 @@
 import _ from 'lodash';
 import { differenceInDays, format, formatDistance, formatDistanceToNow, subDays } from 'date-fns';
 import { vi } from 'date-fns/locale/vi'
+import { Common } from '../utils';
+import { UserAccountLoginEntity } from '../model/user-account-entity';
 
 export class Ultility {
     static convertToNumber = (value: any) => {
@@ -23,5 +25,8 @@ export class Ultility {
             : 'Một tháng trước';
     }
 
-    static getUserInfo = () => { }
+    static getUserInfo = () => {
+        const info: UserAccountLoginEntity = JSON.parse(Common.storage.getString('user_info') ?? '');
+        return info
+    }
 }

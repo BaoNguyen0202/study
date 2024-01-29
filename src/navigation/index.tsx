@@ -8,13 +8,12 @@ import DetailsScreen from '../screens/detail/detail';
 import MainTab from './main-tab';
 import { SCREEN_CONSTANT } from '../config/configuration';
 import { RootState } from '../redux-store/store';
-import { StyleSheet } from 'react-native';
 import HelloScreen from '../screens/login/hello-screen';
-
 import CategoryTypeScreen from '../screens/main/category-type/category-type';
 import FavoriteCategoryScreen from '../screens/main/favorite-category/favorite-category';
 import CategoryScreen from '../screens/main/category/category';
 import RecordPlayerScreen from '../screens/main/record-player/record-player';
+import BlogScreen from '../screens/main/blog/blog';
 
 const Stack = createStackNavigator();
 
@@ -31,14 +30,12 @@ const AppNavigationContainer = () => {
                     name={SCREEN_CONSTANT.HOME}
                     component={HomeScreen}
                     options={{ title: 'Home', headerTitleStyle: { color: theme.colors.text }, headerShown: false }}
-
                 />
                 <Stack.Screen
                     name={SCREEN_CONSTANT.MAIN_TAB}
                     component={MainTab}
                     options={{ title: 'MainTab', headerTitleStyle: { color: theme.colors.text }, headerShown: false }}
                 />
-
                 <Stack.Screen
                     name={SCREEN_CONSTANT.DETAIL}
                     component={DetailsScreen}
@@ -62,6 +59,11 @@ const AppNavigationContainer = () => {
                 <Stack.Screen
                     name={SCREEN_CONSTANT.RECORD_PLAYER}
                     component={RecordPlayerScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name={SCREEN_CONSTANT.BLOG}
+                    component={BlogScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>
