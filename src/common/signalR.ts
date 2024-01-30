@@ -2,9 +2,11 @@ import signalR, { HttpTransportType, HubConnectionBuilder, LogLevel } from '@mic
 import { CONFIG_URL } from '../config/configuration';
 
 const createSignalRConnection = () => {
-    const _url = CONFIG_URL.BASE_URL + '/notificationHub';
     const hubConnection = new HubConnectionBuilder()
-        .withUrl('https://localhost:44330/signalRHub', { transport: HttpTransportType.WebSockets, skipNegotiation: true })
+        .withUrl(CONFIG_URL.BASE_URL + 'signalRHub', {
+            transport: HttpTransportType.WebSockets,
+            skipNegotiation: true
+        })
         .configureLogging(LogLevel.Debug)
         .withAutomaticReconnect()
         .build();
