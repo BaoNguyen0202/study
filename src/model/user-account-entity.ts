@@ -25,6 +25,7 @@ export class UserAccountLoginEntity extends BaseEntity {
 
 export class UserAccountLoginResponseEntity extends BaseEntity {
     userName?: string | null;
+    password?: string | null;
     code?: string | null;
     image?: string | null;
     email?: string | null;

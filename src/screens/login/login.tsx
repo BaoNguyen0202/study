@@ -19,8 +19,9 @@ const LoginScreen = ({ navigation }: any) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
-    const [fcmToken] = useMMKVString('FCM_TOKEN');
+    const [fcmToken, setToken] = useMMKVString('FCM_TOKEN');
     const [userNameStore, setUserNameStore] = useMMKVString(APP_CONSTANT.userNameStore);
+    const [userPassWordStore, setPassWordStore] = useMMKVString(APP_CONSTANT.passWordStore);
     const [secureTextEntry, setSecureTextEntry] = useState(true);
     const userService = new BaseService<UserAccountLoginEntity, UserAccountLoginResponseEntity>('UserAccount/login');
 
@@ -36,7 +37,9 @@ const LoginScreen = ({ navigation }: any) => {
                 const result = response.data.data;
                 Common.storage.set('user_info', JSON.stringify(result));
                 Common.storage.set('api_secret', result?.token ?? '');
+
                 setUserNameStore(result?.userName ?? '');
+                setToken(result?.token ?? '')
                 setIsLoading(false);
                 await Common.dismissKeyboard(() => {
                     navigation.navigate(SCREEN_CONSTANT.CATEGORY_TYPE);
@@ -52,6 +55,8 @@ const LoginScreen = ({ navigation }: any) => {
             setIsLoading(false);
         }
     };
+
+
     return (
         <View style={styles.container}>
             <Image source={ImageAssets.Bg_Image} style={styles.bgImage} />
@@ -134,7 +139,6 @@ const styles = StyleSheet.create({
         color: '#FE2083',
         fontWeight: '600',
         alignSelf: 'flex-end',
-        marginRight: 24
     },
     bgImage: {
         flex: 1,

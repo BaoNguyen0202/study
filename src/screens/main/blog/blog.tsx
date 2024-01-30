@@ -33,7 +33,7 @@ const BlogScreen = ({ navigation }: any) => {
             <View style={[blogStyles.containerItem, { height: HEIGHT / 14, marginBottom: 20 }]}>
                 <Appbar.Header style={favoriteCategoryStyles.header}>
                     <View style={favoriteCategoryStyles.titleContainer}>
-                        <TouchableOpacity style={favoriteCategoryStyles.iconheader} onPress={() => console.log('Back !')}>
+                        <TouchableOpacity style={favoriteCategoryStyles.iconheader} onPress={() => navigation.goBack()}>
                             <Icon source={'chevron-left'} color="#FFF" size={24} />
                         </TouchableOpacity>
                         <Text style={[favoriteCategoryStyles.appbarText, { textAlign: 'center' }]}>{data?.isIncognito ? data?.incognitoName : data?.fullName}</Text>

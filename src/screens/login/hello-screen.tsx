@@ -1,10 +1,24 @@
-import { View, Text, StyleSheet, Image } from 'react-native'
-import React from 'react'
+import { View, Text, StyleSheet, Image, Alert } from 'react-native'
+import React, { useEffect } from 'react'
 import { Button, Icon } from 'react-native-paper'
-import { SCREEN_CONSTANT } from '../../config/configuration'
+import { APP_CONSTANT, SCREEN_CONSTANT, STATUS_REPONSE_API } from '../../config/configuration'
 import { ImageAssets } from '../../assets'
+import { useMMKVString } from 'react-native-mmkv'
 
 const HelloScreen = ({ navigation }: any) => {
+    const [fcmToken, setToken] = useMMKVString('FCM_TOKEN');
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (fcmToken) {
+                navigation.navigate(SCREEN_CONSTANT.CATEGORY_TYPE);
+            }
+        }, 1000);
+
+        return () => clearTimeout(timeoutId);
+    }, [fcmToken]);
+
+
     return (
         <View style={styles.container}>
             <Image source={ImageAssets.Bg_Image} style={styles.bgImage} />

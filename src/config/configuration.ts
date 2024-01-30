@@ -19,6 +19,7 @@ export class STATUS_REPONSE_API {
 
 export class APP_CONSTANT {
     static userNameStore = 'USER_APP';
+    static passWordStore = 'PASS_APP';
 }
 
 export class SCREEN_CONSTANT {
