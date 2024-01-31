@@ -16,6 +16,7 @@ import RecordPlayerScreen from '../screens/main/record-player/record-player';
 import BlogScreen from '../screens/main/blog/blog';
 import TrackListScreen from '../screens/main/track-list/track-list';
 import PodcastCategoryScreen from '../screens/main/category/podcast-category';
+import CreateBlogScreen from '../screens/main/create-blog/create-blog';
 
 const Stack = createStackNavigator();
 
@@ -76,6 +77,11 @@ const AppNavigationContainer = () => {
                 <Stack.Screen
                     name={SCREEN_CONSTANT.PODCACST_CATEGORY}
                     component={PodcastCategoryScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name={SCREEN_CONSTANT.CREATE_BLOG}
+                    component={CreateBlogScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

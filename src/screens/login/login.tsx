@@ -98,7 +98,7 @@ const LoginScreen = ({ navigation }: any) => {
                     <Image source={ImageAssets.ios_ic} />
                 </View>
             </View>
-            <Text style={styles.textNoAcount}>Bạn chưa có tài khoản?<Text style={{ color: '#FE2083' }}>Đăng ký ngay</Text></Text>
+            <Text style={styles.textNoAcount}>Bạn chưa có tài khoản? <Text style={{ color: '#FE2083' }}>Đăng ký ngay</Text></Text>
             {isLoading ? <ActivityIndicator animating={true} color='#FE2083' /> : <></>}
         </View>
     );
