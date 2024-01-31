@@ -18,7 +18,7 @@ const App = () => {
                 Toast.show({
                     type: 'error',
                     text1: 'Thông báo duyệt',
-                    text2: `${message.type == 0 ? `Bài đăng "${message.name}" của bạn ${message.status}` : message.type == 1 ? `Bình luận của bạn ${message.status}` : ''} 👋`
+                    text2: `${message.type == 0 ? `Bài đăng "${message.name}" của bạn ${message.status}` : message.type == 1 ? `Bình luận của bạn ${message.status}` : ''}`
                 });
             }
             else {
@@ -26,7 +26,7 @@ const App = () => {
                     Toast.show({
                         type: 'error',
                         text1: 'Thông báo duyệt',
-                        text2: `Bài đăng "${message.name}" ${message.status} 👋`
+                        text2: `Bài đăng "${message.name}" ${message.status}`
                     });
                 }
             }

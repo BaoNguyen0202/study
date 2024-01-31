@@ -41,4 +41,5 @@ export class SCREEN_CONSTANT {
     static RECORD_PLAYER = 'record-player';
     static TRACK_LIST = 'track-list';
     static PODCACST_CATEGORY = 'podcast-category';
+    static CREATE_BLOG = 'create-blog';
 }
