@@ -5,11 +5,11 @@ import { styles } from './personal.style'
 import { Avatar, Button, Icon, Modal, Switch, TextInput, Title } from 'react-native-paper'
 import { useMMKVString } from 'react-native-mmkv'
 import { CONFIG_URL, SCREEN_CONSTANT, STATUS_REPONSE_API } from '../../config/configuration'
-import axios from 'axios'
 import { UserAccountChangePassWord, UserAccountEntity } from '../../model/user-account-entity'
 import { Ultility } from '../../common/ultility'
 import { InforService } from '../../service/user-account-service'
-import { ChangePass } from '../../service/change-pass-service'
+import { Common } from '../../utils'
+import Toast from 'react-native-toast-message'
 
 const Personal = ({ navigation }: any) => {
     const [isSwitchOn, setIsSwitchOn] = React.useState(false);
@@ -19,34 +19,30 @@ const Personal = ({ navigation }: any) => {
     const [visibleChangePasswordModal, setVisibleChangePasswordModal] = useState(false);
     const [secureTextEntry, setSecureTextEntry] = useState(true);
     const [userData, setUserData] = useState<UserAccountEntity | null>(null);
-    const [acountId, setAcountId] = useState<string | null | undefined>('');
-    const [fullName, setFullName] = useState('');
-    const [address, setAddress] = useState('');
-    const [birth, setBirth] = useState('');
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const handleLogout = () => {
-        setToken('')
+        setToken('');
+        Common.storage.clearAll();
         navigation.navigate(SCREEN_CONSTANT.LOG_IN);
     }
     const showModal = () => setVisibleModal(true);
     const hideModal = () => setVisibleModal(false);
     const showChangePasswordModal = () => setVisibleChangePasswordModal(true);
     const hideChangePasswordModal = () => setVisibleChangePasswordModal(false);
+    const userAccountId = Ultility.getUserInfo().id ?? null;
+
     useEffect(() => {
-        let getId = Ultility.getUserInfo()
-        let AcountId = getId?.id;
-        setAcountId(AcountId)
         fetchUserData()
     }, []);
-    const infor = new InforService();
+
+    const inforService = new InforService();
 
     const fetchUserData = async () => {
         try {
-            if (acountId) {
-                const response = await infor.getInfor(acountId);
-                console.log(response?.status);
+            if (userAccountId) {
+                const response = await inforService.getInfor(userAccountId);
                 if (response?.data?.code === STATUS_REPONSE_API.OK) {
                     const userDataInfor = response.data.data;
                     if (userDataInfor) {
@@ -66,42 +62,57 @@ const Personal = ({ navigation }: any) => {
     const handleUpdateInfor = async () => {
         try {
             const updatedInfo: UserAccountEntity = {
-                userAccountId: acountId,
-                code: 'ADMIN',
-                gender: 0,
-                image: null,
-                fullName: fullName,
-                address: address,
-                birth: '2024-02-01T02:24:38.441Z',
+                userAccountId: userAccountId,
+                code: Ultility.getUserInfo().code,
+                gender: userData?.gender,
+                image: userData?.image,
+                fullName: userData?.fullName,
+                address: userData?.address,
+                birth: userData?.birth ? new Date(userData?.birth) : null,
             };
-            const response = await infor.updateInfor(updatedInfo);
+            const response = await inforService.updateInfor(updatedInfo);
             if (response?.data?.code === STATUS_REPONSE_API.OK) {
-                console.log("Thông tin người dùng đã được cập nhật thành công");
+                Toast.show({
+                    type: 'error',
+                    text1: 'Thông báo',
+                    text2: `Cập nhật thông tin thành công.`
+                });
             } else {
-                console.error("Cập nhật thông tin người dùng không thành công");
+                Toast.show({
+                    type: 'error',
+                    text1: 'Thông báo',
+                    text2: response?.data.message?.toString()
+                });
             }
         } catch (error) {
             console.error('Error updating user profile:', error);
         } finally { setVisibleModal(false) }
     }
-    const changePass = new ChangePass()
+
     const handleChangePass = async () => {
         try {
             const changePassWord: UserAccountChangePassWord = {
-                id: acountId,
+                id: userAccountId,
                 oldHashPassword: currentPassword,
                 newHashpassword: newPassword,
             };
-            const response = await changePass.changePass(changePassWord)
+            const response = await inforService.changePass(changePassWord)
             if (response?.data?.code === STATUS_REPONSE_API.OK) {
-                console.log("mật khẩu người dùng đã được cập nhật thành công");
-                setVisibleChangePasswordModal(false)
-                Alert.alert('Đổi mật khẩu thành công. Bạn sẽ đăng xuất sau 3 giây để đăng nhập lại.')
+                setVisibleChangePasswordModal(false);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Thông báo',
+                    text2: `Đổi mật khẩu thành công. Bạn sẽ đăng xuất sau 3 giây để đăng nhập lại.`
+                });
                 setTimeout(() => {
                     handleLogout();
                 }, 3000);
             } else {
-                console.error("mật khẩu thông tin người dùng không thành công");
+                Toast.show({
+                    type: 'error',
+                    text1: 'Thông báo',
+                    text2: response?.data.message?.toString()
+                });
             }
         } catch (error) {
             console.error('Error :', error);
@@ -158,24 +169,24 @@ const Personal = ({ navigation }: any) => {
                     placeholder='Họ và tên'
                     mode='outlined'
                     style={styles.input}
-                    value={fullName}
-                    onChangeText={(text) => setFullName(text)}
+                    value={userData?.fullName ?? ''}
+                    onChangeText={(text) => userData ? userData.fullName = text : <></>}
                 />
                 <Text style={[styles.text, { fontSize: 14, fontWeight: '500' }]}>Địa chỉ</Text>
                 <TextInput
                     placeholder='Địa chỉ'
                     mode='outlined'
                     style={styles.input}
-                    value={address}
-                    onChangeText={(text) => setAddress(text)}
+                    value={userData?.address ?? ''}
+                    onChangeText={(text) => userData ? userData.address = text : <></>}
                 />
                 <Text style={[styles.text, { fontSize: 14, fontWeight: '500' }]}>Ngày sinh</Text>
                 <TextInput
                     placeholder='Ngày sinh'
                     mode='outlined'
                     style={styles.input}
-                    value={birth}
-                    onChangeText={(text) => setBirth(text)}
+                    value={userData?.birth?.toLocaleDateString() ?? ''}
+                    onChangeText={(text) => userData ? userData.birth = new Date(text) : <></>}
                 />
                 <View style={[styles.row, { justifyContent: 'space-between', marginTop: 16 }]}>
                     <Button style={{ borderColor: '#FE2083', width: '47%' }} textColor='#FE2083' mode='outlined' onPress={hideModal}>Hủy</Button>
