@@ -35,15 +35,15 @@ const Personal = ({ navigation }: any) => {
     const showChangePasswordModal = () => setVisibleChangePasswordModal(true);
     const hideChangePasswordModal = () => setVisibleChangePasswordModal(false);
     useEffect(() => {
-        let getId = Ultility.getUserInfo()
-        let AcountId = getId?.id;
-        setAcountId(AcountId)
         fetchUserData()
     }, []);
     const infor = new InforService();
 
     const fetchUserData = async () => {
         try {
+            let getId = await Ultility.getUserInfo()
+            let AcountId = getId?.id;
+            setAcountId(AcountId)
             if (acountId) {
                 const response = await infor.getInfor(acountId);
                 console.log(response?.status);
