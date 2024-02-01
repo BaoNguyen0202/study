@@ -23,8 +23,8 @@ export const styles = StyleSheet.create({
         marginTop: 40
     },
     content: {
-        alignSelf: 'center',
-        paddingTop: 24
+        paddingTop: 24,
+        alignItems: 'center'
     },
     text: {
         color: '#FFF'
@@ -49,4 +49,13 @@ export const styles = StyleSheet.create({
         backgroundColor: '#3F345B',
         marginVertical: 8,
     },
+    modalContent: {
+        backgroundColor: '#1A1429',
+        marginHorizontal: 24,
+        padding: 24,
+    },
+    input: {
+        marginVertical: 8
+    },
+
 });

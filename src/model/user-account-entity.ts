@@ -3,6 +3,8 @@ import { CustomerEntity } from "./customer-enity";
 import { RoleEntity } from "./role-entity";
 
 export class UserAccountEntity extends BaseEntity {
+    fullName?: string | null;
+    address?: string | null;
     userName?: string | null;
     code?: string | null;
     image?: string | null;
@@ -11,6 +13,10 @@ export class UserAccountEntity extends BaseEntity {
     phone?: string | null;
     status?: number | null;
     role?: RoleEntity | null;
+    customer?: CustomerEntity | null;
+    birth?: string | null | undefined;
+    userAccountId?: string | null;
+    gender?: number | null;
 }
 
 export class UserAccountCategoryType {
@@ -34,4 +40,10 @@ export class UserAccountLoginResponseEntity extends BaseEntity {
     token?: string | null;
     role?: RoleEntity | null;
     customer?: CustomerEntity | null;
+}
+
+export class UserAccountChangePassWord {
+    id?: string | null;
+    oldHashPassword?: string | null;
+    newHashpassword?: string | null;
 }
