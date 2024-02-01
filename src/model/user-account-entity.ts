@@ -14,7 +14,7 @@ export class UserAccountEntity extends BaseEntity {
     status?: number | null;
     role?: RoleEntity | null;
     customer?: CustomerEntity | null;
-    birth?: string | null | undefined;
+    birth?: Date | null | undefined;
     userAccountId?: string | null;
     gender?: number | null;
 }
