@@ -18,7 +18,7 @@ const Personal = ({ navigation }: any) => {
     const [visibleModal, setVisibleModal] = useState(false);
     const [visibleChangePasswordModal, setVisibleChangePasswordModal] = useState(false);
     const [secureTextEntry, setSecureTextEntry] = useState(true);
-    const [userData, setUserData] = useState<UserAccountEntity | null>(null);
+    const [userData, setUserData] = useState<UserAccountEntity | null>(Ultility.getUserInfo());
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -27,11 +27,49 @@ const Personal = ({ navigation }: any) => {
         Common.storage.clearAll();
         navigation.navigate(SCREEN_CONSTANT.LOG_IN);
     }
-    const showModal = () => setVisibleModal(true);
-    const hideModal = () => setVisibleModal(false);
+    const showModal = async () => {
+        await fetchUserData();
+        setVisibleModal(true);
+    };
+
+    const hideModal = async () => {
+        await fetchUserData();
+        setVisibleModal(false);
+    };
+
     const showChangePasswordModal = () => setVisibleChangePasswordModal(true);
     const hideChangePasswordModal = () => setVisibleChangePasswordModal(false);
     const userAccountId = Ultility.getUserInfo().id ?? null;
+
+    const handleFullNameChange = (text: any) => {
+        setUserData((prevUserData) => ({
+            ...prevUserData,
+            customer: {
+                ...prevUserData?.customer,
+                fullName: text,
+            },
+        }));
+    };
+
+    const handleAddressChange = (text: any) => {
+        setUserData((prevUserData) => ({
+            ...prevUserData,
+            customer: {
+                ...prevUserData?.customer,
+                address: text,
+            },
+        }));
+    };
+
+    const handleBirthChange = (text: any) => {
+        setUserData((prevUserData) => ({
+            ...prevUserData,
+            customer: {
+                ...prevUserData?.customer,
+                birth: text,
+            },
+        }));
+    };
 
     useEffect(() => {
         fetchUserData()
@@ -66,9 +104,9 @@ const Personal = ({ navigation }: any) => {
                 userAccountId: userAccountId,
                 gender: userData?.gender,
                 image: userData?.image,
-                fullName: userData?.fullName,
-                address: userData?.address,
-                birth: userData?.birth ? new Date(userData?.birth) : null,
+                fullName: userData?.customer?.fullName,
+                address: userData?.customer?.address,
+                birth: userData?.customer?.birth ? new Date(userData.customer?.birth) : null,
             };
             const response = await inforService.updateInfor(updatedInfo);
             if (response?.data?.code === STATUS_REPONSE_API.OK) {
@@ -169,24 +207,24 @@ const Personal = ({ navigation }: any) => {
                     placeholder='Họ và tên'
                     mode='outlined'
                     style={styles.input}
-                    value={userData?.fullName ?? ''}
-                    onChangeText={(text) => userData ? userData.fullName = text : <></>}
+                    value={userData?.customer?.fullName ?? ''}
+                    onChangeText={handleFullNameChange}
                 />
                 <Text style={[styles.text, { fontSize: 14, fontWeight: '500' }]}>Địa chỉ</Text>
                 <TextInput
                     placeholder='Địa chỉ'
                     mode='outlined'
                     style={styles.input}
-                    value={userData?.address ?? ''}
-                    onChangeText={(text) => userData ? userData.address = text : <></>}
+                    value={userData?.customer?.address ?? ''}
+                    onChangeText={handleAddressChange}
                 />
                 <Text style={[styles.text, { fontSize: 14, fontWeight: '500' }]}>Ngày sinh</Text>
                 <TextInput
                     placeholder='Ngày sinh'
                     mode='outlined'
                     style={styles.input}
-                    value={userData?.birth?.toLocaleDateString() ?? ''}
-                    onChangeText={(text) => userData ? userData.birth = new Date(text) : <></>}
+                    value={userData?.customer?.birth?.toString() ?? ''}
+                    onChangeText={handleBirthChange}
                 />
                 <View style={[styles.row, { justifyContent: 'space-between', marginTop: 16 }]}>
                     <Button style={{ borderColor: '#FE2083', width: '47%' }} textColor='#FE2083' mode='outlined' onPress={hideModal}>Hủy</Button>
