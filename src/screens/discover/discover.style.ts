@@ -177,5 +177,6 @@ export const styles = StyleSheet.create({
         height: HEIGHT / 4,
         marginTop: 10,
         borderRadius: 12
-    }
+    },
+
 });

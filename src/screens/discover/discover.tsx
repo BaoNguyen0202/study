@@ -136,37 +136,35 @@ const Discover = ({ navigation }: any) => {
                         <View style={styles.row}>
                         </View>
                         <TouchableOpacity onPress={() => deleteBlog(item)}>
-
-                            <View>
-                                <Icon color='#FFF' source={'delete'} size={17} />
+                            <View style={styles.row}>
+                                <Icon color='#FFF' source={'dots-horizontal'} size={17} />
+                                <Icon color='#FFF' source={'close'} size={17} />
                             </View>
                         </TouchableOpacity>
                     </View>
                 )}
-                <TouchableOpacity onPress={() => navigateBlogDetail(item)}>
-                    <View style={[styles.row, styles.spcabetwen]}>
-                        <View style={styles.row}>
-                            <Avatar.Image source={item.isIncognito ? require(`../../assets/images/avatar.png`) : { uri: CONFIG_URL.URL_UPLOAD + item.avatar }} size={40} />
-                            <View style={{ marginLeft: 8 }}>
-                                <View style={styles.row}>
-                                    <Text style={[styles.text, { fontSize: 14 }]}>{item.isIncognito ? item.incognitoName : item.fullName}</Text>
-                                    {item.incognitoName && (
-                                        <View style={{ justifyContent: 'center', marginLeft: 4 }}>
-                                            <Icon color='#FFF' source={'check-decagram'} size={14} />
-                                        </View>
-                                    )}
-                                </View>
-                                <Text style={[styles.text, { fontSize: 12, marginTop: 4 }]}>{item.isIncognito ? 'Ẩn danh' : item.userName}</Text>
+                <View style={[styles.row, styles.spcabetwen]}>
+                    <View style={styles.row}>
+                        <Avatar.Image source={item.isIncognito ? require(`../../assets/images/avatar.png`) : { uri: CONFIG_URL.URL_UPLOAD + item.avatar }} size={40} />
+                        <View style={{ marginLeft: 8 }}>
+                            <View style={styles.row}>
+                                <Text style={[styles.text, { fontSize: 14 }]}>{item.isIncognito ? item.incognitoName : item.fullName}</Text>
+                                {item.incognitoName && (
+                                    <View style={{ justifyContent: 'center', marginLeft: 4 }}>
+                                        <Icon color='#FFF' source={'check-decagram'} size={14} />
+                                    </View>
+                                )}
                             </View>
-                        </View>
-                        <View>
-                            <Text style={styles.date}> {Ultility.formatDistanceToNow(item.createdAt)}</Text>
-                            <View style={styles.categoryName}>
-                                <Text style={styles.text}>{item.categoryName}</Text>
-                            </View>
+                            <Text style={[styles.text, { fontSize: 12, marginTop: 4 }]}>{item.isIncognito ? 'Ẩn danh' : item.userName}</Text>
                         </View>
                     </View>
-                </TouchableOpacity >
+                    <View>
+                        <Text style={styles.date}> {Ultility.formatDistanceToNow(item.createdAt)}</Text>
+                        <View style={styles.categoryName}>
+                            <Text style={styles.text}>{item.categoryName}</Text>
+                        </View>
+                    </View>
+                </View>
                 <View style={styles.content}>
                     {renderBlogTextContent(item)}
                     {item.type == 3 && item.poster && (
@@ -204,10 +202,11 @@ const Discover = ({ navigation }: any) => {
                                 <Icon color='#C2C2C2' source={'cards-heart'} size={14} />
                                 <Text style={[styles.text, styles.feedback]}>{item.totalLike}</Text>
                             </View>
-                            <View style={[styles.row, { marginLeft: 8 }]}>
+                            {/* naviagtionBlog */}
+                            <TouchableOpacity style={[styles.row, { marginLeft: 8 }]} onPress={() => navigateBlogDetail(item)}>
                                 <Icon color='#C2C2C2' source={'dots-horizontal-circle'} size={14} />
                                 <Text style={[styles.text, styles.feedback]}>{item.totalComment}</Text>
-                            </View>
+                            </TouchableOpacity >
                         </View>
                         <View style={item.selected ? styles.favorite : styles.favoriteDefault} onTouchEnd={() => setIsFavorite(!isFavorite)}>
                             <Icon color='#FFF' source={'cards-heart'} size={14} />

@@ -31,5 +31,23 @@ export const blogStyles =
             paddingRight: 12,
             marginLeft: 8,
             width: WIDTH - 16 - 30 - 16 - 8
+        },
+        containerInputComent: {
+            backgroundColor: '#2B233E99',
+            height: 52,
+            bottom: 25,
+            padding: 8,
+            width: '90%',
+            alignSelf: 'center',
+            position: 'absolute',
+            shadowColor: '#00000040',
+            borderRadius: 100,
+        },
+        input: {
+            height: 36,
+            width: '60%',
+            backgroundColor: '#1B1627',
+            marginHorizontal: 12,
+            marginVertical: 8,
         }
     });

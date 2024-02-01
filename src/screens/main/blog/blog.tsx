@@ -2,7 +2,7 @@ import { useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { UserBlogEntity } from "../../../model/blog-entity";
 import { Alert, Image, ImageBackground, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
-import { Appbar, Avatar, Icon } from "react-native-paper";
+import { Appbar, Avatar, Icon, TextInput } from "react-native-paper";
 import { styles } from "../../discover/discover.style";
 import { Ultility } from "../../../common/ultility";
 import { CONFIG_URL, SCREEN_CONSTANT, STATUS_REPONSE_API } from "../../../config/configuration";
@@ -23,6 +23,8 @@ const BlogScreen = ({ navigation }: any) => {
     const [dataRating, setDataRating] = useState<RatingBlogEntity[]>([]);
     const [pageSize, setPageSize] = useState<number>(5);
     const [pageIndex, setPageIndex] = useState<number>(1);
+    const [commentText, setCommentText] = useState('');
+
     const blogService = new BlogService();
 
     const ratingSearch: RatingBlogEntitySearch = {
@@ -136,7 +138,23 @@ const BlogScreen = ({ navigation }: any) => {
                 : <></>
         )
     }
-
+    const renderInputComent = () => {
+        return (
+            <View style={[blogStyles.containerInputComent, styles.row, { alignItems: 'center', justifyContent: 'space-between' }]}>
+                <View></View>
+                <Icon color='#FFF' source={'camera'} size={20} />
+                <Icon color='#FFF' source={'image'} size={20} />
+                <Icon color='#FFF' source={'microphone'} size={20} />
+                <TextInput
+                    outlineStyle={{ borderRadius: 20, borderColor: '#1B1627' }}
+                    placeholder="Viết bình luận" mode="outlined"
+                    style={blogStyles.input}
+                    value={commentText}
+                    onChangeText={setCommentText}
+                    right={<TextInput.Icon icon={'send'} color="#FFF" size={20} />} />
+            </View>
+        )
+    }
     return (
         <SafeAreaView style={styles.container}>
             <View style={[blogStyles.containerItem, { height: HEIGHT / 14, marginBottom: 20 }]}>
@@ -157,8 +175,9 @@ const BlogScreen = ({ navigation }: any) => {
                         <View style={styles.row}>
                         </View>
                         <TouchableOpacity onPress={() => deleteBlog()}>
-                            <View>
-                                <Icon color='#FFF' source={'delete'} size={17} />
+                            <View style={styles.row}>
+                                <Icon color='#FFF' source={'dots-horizontal'} size={17} />
+                                <Icon color='#FFF' source={'close'} size={17} />
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -237,6 +256,7 @@ const BlogScreen = ({ navigation }: any) => {
             <View style={blogStyles.userComment}>
                 {renderRating()}
             </View>
+            {renderInputComent()}
         </SafeAreaView>
     );
 }
