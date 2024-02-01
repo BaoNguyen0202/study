@@ -79,9 +79,8 @@ const Personal = ({ navigation }: any) => {
 
     const fetchUserData = async () => {
         try {
-            if (acountId) {
-                const response = await infor.getInfor(acountId);
-                console.log(response?.status);
+            if (userAccountId) {
+                const response = await inforService.getInfor(userAccountId);
                 if (response?.data?.code === STATUS_REPONSE_API.OK) {
                     const userDataInfor = response.data.data;
                     if (userDataInfor) {
