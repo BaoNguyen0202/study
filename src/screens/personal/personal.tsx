@@ -62,8 +62,8 @@ const Personal = ({ navigation }: any) => {
     const handleUpdateInfor = async () => {
         try {
             const updatedInfo: UserAccountEntity = {
+                id: userData?.customer?.id,
                 userAccountId: userAccountId,
-                code: Ultility.getUserInfo().code,
                 gender: userData?.gender,
                 image: userData?.image,
                 fullName: userData?.fullName,
