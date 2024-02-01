@@ -142,9 +142,7 @@ const BlogScreen = ({ navigation }: any) => {
         return (
             <View style={[blogStyles.containerInputComent, styles.row, { alignItems: 'center', justifyContent: 'space-between' }]}>
                 <View></View>
-                <Icon color='#FFF' source={'camera'} size={20} />
-                <Icon color='#FFF' source={'image'} size={20} />
-                <Icon color='#FFF' source={'microphone'} size={20} />
+                <Icon color='#FFF' source={'keyboard'} size={20} />
                 <TextInput
                     outlineStyle={{ borderRadius: 20, borderColor: '#1B1627' }}
                     placeholder="Viết bình luận" mode="outlined"

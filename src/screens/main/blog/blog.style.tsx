@@ -45,9 +45,9 @@ export const blogStyles =
         },
         input: {
             height: 36,
-            width: '60%',
+            width: '75%',
             backgroundColor: '#1B1627',
-            marginHorizontal: 12,
+            marginRight: 12,
             marginVertical: 8,
         }
     });
