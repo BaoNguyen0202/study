@@ -10,5 +10,6 @@ const filter = require('./ic_filter.png')
 const Ellipse10 = require('./Ellipse10.png')
 const Ellipse11 = require('./Ellipse11.png')
 const Polygon1 = require('./Polygon1.png')
+const plus = require('./Plus.png')
 
-export { InitLogo, Bg_Image, Bg_Image2, Bg_Image3, ios_ic, google_ic, facebook_ic, avatar, filter, Ellipse10, Ellipse11, Polygon1 };
+export { InitLogo, Bg_Image, Bg_Image2, Bg_Image3, ios_ic, google_ic, facebook_ic, avatar, filter, Ellipse10, Ellipse11, Polygon1, plus };

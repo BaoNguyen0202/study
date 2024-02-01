@@ -38,7 +38,6 @@ const RecordPlayerScreen = ({ navigation }: any) => {
             console.log('Error loading sound', error);
         }
     });
-    console.log(sound)
     const playRecord = async () => {
         setIsPlay(!isPlay);
         if (!isPlay) {
@@ -83,7 +82,7 @@ const RecordPlayerScreen = ({ navigation }: any) => {
             <View style={[favoriteCategoryStyles.section, { height: HEIGHT / 14 }]}>
                 <Appbar.Header style={favoriteCategoryStyles.header}>
                     <View style={favoriteCategoryStyles.titleContainer}>
-                        <TouchableOpacity style={favoriteCategoryStyles.iconheader} onPress={() => console.log('Back !')}>
+                        <TouchableOpacity style={favoriteCategoryStyles.iconheader} onPress={() => navigation.goBack()}>
                             <Icon source={'chevron-left'} color="#FFF" size={24} />
                         </TouchableOpacity>
                         <Text style={[favoriteCategoryStyles.appbarText, { textAlign: 'center' }]}>{data?.categoryName}</Text>

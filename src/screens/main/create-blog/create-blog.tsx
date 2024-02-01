@@ -6,10 +6,18 @@ import { Avatar, Button, Checkbox, Icon, TextInput } from 'react-native-paper'
 import { favoriteCategoryStyles } from '../favorite-category/favorite-category.style'
 import { BlogEntity, UserBlogEntity } from '../../../model/blog-entity'
 import { HEIGHT } from '../../../common/constant'
+import Toast from 'react-native-toast-message'
 
 const CreateBlogScreen = ({ navigation }: any) => {
 
     const [data, setData] = useState<BlogEntity>({});
+    const postBlog = async () => {
+        Toast.show({
+            type: 'error',
+            text1: 'Thông báo',
+            text2: `Bài đăng của bạn đã được lưu. Chúng tôi sẽ duyệt và hiển thị`
+        });
+    }
 
     return (
         <SafeAreaView style={createBlogStyles.container}>
@@ -47,7 +55,7 @@ const CreateBlogScreen = ({ navigation }: any) => {
                         <Image source={require('../../../assets/images/category_1.png')} style={{ width: '100%', height: '100%', borderRadius: 20 }} />
                     </View>
                 </View>
-                <Button style={createBlogStyles.bottomButtonContainer} mode="contained">
+                <Button style={createBlogStyles.bottomButtonContainer} mode="contained" onPress={() => postBlog()}>
                     <Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>Đăng ngay</Text>
                 </Button>
             </View>

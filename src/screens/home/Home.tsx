@@ -18,7 +18,7 @@ const HomeScreen = ({ navigation }: any) => {
     const _handleMore = async (type: any = '') => {
         if (type === 'CATEGORY') {
             await Common.dismissKeyboard(() => {
-                navigation.navigate(SCREEN_CONSTANT.FAVORITE_CATEGORY);
+                navigation.navigate(SCREEN_CONSTANT.CATEGORY);
             });
         }
         if (type === 'PODCAST') {
@@ -193,21 +193,45 @@ const HomeScreen = ({ navigation }: any) => {
     }
 
     const saveFavoritePodcast = async (podcast: UserBlogEntity) => {
-        setDataPodcast((prevBlogs) =>
-            prevBlogs.map((c) =>
-                c.id === podcast.id ? { ...c, selected: !c.selected } : c
-            )
-        );
-        Alert.alert('Thao tác thành công');
+        let req = {
+            userAccountId: 'cde87cf5-06de-47ac-9574-ac22d89c9432',
+            categoryId: podcast.id,
+            selected: !podcast.selected
+        }
+        let response = await blogService.saveFavoriteBlog(req);
+        if (response?.data.code === STATUS_REPONSE_API.OK) {
+            setDataPodcast((prevPodcasts) =>
+                prevPodcasts.map((c) =>
+                    c.id === podcast.id ? { ...c, selected: !c.selected } : c
+                )
+            );
+            Alert.alert('Thao tác thành công');
+        }
+        else {
+            console.error('Failed:', response?.data.message);
+            Alert.alert('Failed', response?.data.message ?? '');
+        }
     }
 
     const saveFavoriteBlogText = async (blogText: UserBlogEntity) => {
-        setDataBlogText((prevBlogs) =>
-            prevBlogs.map((c) =>
-                c.id === blogText.id ? { ...c, selected: !c.selected } : c
-            )
-        );
-        Alert.alert('Thao tác thành công');
+        let req = {
+            userAccountId: 'cde87cf5-06de-47ac-9574-ac22d89c9432',
+            categoryId: blogText.id,
+            selected: !blogText.selected
+        }
+        let response = await blogService.saveFavoriteBlog(req);
+        if (response?.data.code === STATUS_REPONSE_API.OK) {
+            setDataPodcast((prevBlogsText) =>
+                prevBlogsText.map((c) =>
+                    c.id === blogText.id ? { ...c, selected: !c.selected } : c
+                )
+            );
+            Alert.alert('Thao tác thành công');
+        }
+        else {
+            console.error('Failed:', response?.data.message);
+            Alert.alert('Failed', response?.data.message ?? '');
+        }
     }
 
     const handleSearch = async () => {

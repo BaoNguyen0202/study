@@ -139,5 +139,10 @@ export const homeStyles =
             borderRadius: 20,
             padding: 7
         },
-
+        podcastImage: {
+            borderTopLeftRadius: 12,
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: 200
+        }
     });

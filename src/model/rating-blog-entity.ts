@@ -17,10 +17,13 @@ export class RatingBlogEntity extends BaseEntity {
     isIncognito?: boolean | null;
     incognitoName?: string | null;
     reason?: string | null;
+    displayName?: string | null;
+    canDelete?: boolean | null;
     status?: number | null;
 }
 
 
 export class RatingBlogEntitySearch extends SearchEntity {
     blogId?: string | null;
+    userAccountId?: string | null;
 }

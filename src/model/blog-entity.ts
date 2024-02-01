@@ -57,4 +57,6 @@ export class UserBlogEntitySearch extends SearchEntity {
     userAccountId?: string | null;
     type?: number | null;
     categoryTypeIds?: string[] | null;
+    categoryId?: string | null;
+    types?: number[] | null;
 }

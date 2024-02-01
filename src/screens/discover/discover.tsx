@@ -1,15 +1,20 @@
-import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, FlatList, TouchableHighlight, ImageBackground } from 'react-native'
+import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, FlatList, TouchableHighlight, ImageBackground, ScrollView, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Avatar, Card, Checkbox, Icon, Menu } from 'react-native-paper';
+import { ActivityIndicator, Avatar, Card, Checkbox, Icon, Menu } from 'react-native-paper';
 import { ImageAssets } from '../../assets';
 import blog from '../../../blog.json';
-import { UserBlogEntity } from '../../model/blog-entity';
+import { UserBlogEntity, UserBlogEntitySearch } from '../../model/blog-entity';
 import Sound from 'react-native-sound';
 import { styles } from './discover.style';
 import { Ultility } from '../../common/ultility';
-import { CONFIG_URL, SCREEN_CONSTANT } from '../../config/configuration';
+import { CONFIG_URL, SCREEN_CONSTANT, STATUS_REPONSE_API } from '../../config/configuration';
 import { HEIGHT } from '../../common/constant';
 import { Common } from '../../utils';
+import { UserCategoryEntity, UserCategoryEntitySearch } from '../../model/category-entity';
+import { PaginationEntity } from '../../model/pagination-entity';
+import { CategoryService } from '../../service/category-service';
+import { BlogService } from '../../service/blog-service';
+import { homeStyles } from '../home/home.style';
 
 interface TypeCheckboxFilter {
     id: number,
@@ -18,27 +23,76 @@ interface TypeCheckboxFilter {
 }
 
 const Discover = ({ navigation }: any) => {
-    const [selectedButton, setSelectedButton] = useState('');
-    const [selectedTab, setSelectedTab] = useState<string>('post');
-    const [data, setData] = useState<UserBlogEntity | null>(null);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [soundInstance, setSoundInstance] = useState<Sound | null>(null);
-    const [isFavorite, setIsFavorite] = useState(false);
-    const [isAvatarMenuVisible, setAvatarMenuVisible] = useState(false);
+    const categoryTypeSelectedIds = Common.storage.getString('category_type_selected_ids');
     const listTypeCheckBoxFilter: TypeCheckboxFilter[] = [
         { id: 0, name: 'Văn bản', checked: true },
         { id: 2, name: 'Âm thanh', checked: true },
         { id: 3, name: 'Hình ảnh', checked: true },
     ]
     const [typeCheckBoxFilters, setDataCheckBoxFilter] = useState<TypeCheckboxFilter[]>(listTypeCheckBoxFilter);
-
+    const categorySearch: UserCategoryEntitySearch = {
+        id: null,
+        createdAt: null,
+        createdBy: null,
+        updatedAt: null,
+        updatedBy: null,
+        deletedAt: null,
+        deletedBy: null,
+        isSoftDeleted: null,
+        searchString: null,
+        userAccountId: 'cde87cf5-06de-47ac-9574-ac22d89c9432',
+        categoryTypeIds: categoryTypeSelectedIds ? JSON.parse(categoryTypeSelectedIds) : [],
+        pagingAndSortingModel: new PaginationEntity
+    }
+    const blogSearch: UserBlogEntitySearch = {
+        id: null,
+        createdAt: null,
+        createdBy: null,
+        updatedAt: null,
+        updatedBy: null,
+        deletedAt: null,
+        deletedBy: null,
+        isSoftDeleted: null,
+        searchString: null,
+        userAccountId: 'cde87cf5-06de-47ac-9574-ac22d89c9432',
+        categoryTypeIds: categoryTypeSelectedIds ? JSON.parse(categoryTypeSelectedIds) : [],
+        type: null,
+        categoryId: null,
+        types: typeCheckBoxFilters.filter(x => x.checked).map(x => x.id),
+        pagingAndSortingModel: new PaginationEntity
+    }
+    const [blogRequest, setBlogSearch] = useState(blogSearch);
+    const blogService = new BlogService();
+    const [dataBlog, setDataBlog] = useState<UserBlogEntity[]>([]);
+    const [categoryRequest, setCategorySearch] = useState(categorySearch);
+    const categoryService = new CategoryService();
+    const [dataCategory, setDataCategory] = useState<UserCategoryEntity[]>([]);
+    const [pageSizeCategory, setPageSizeCategory] = useState<number>(5);
+    const [pageIndexCategory, setPageIndexCategory] = useState<number>(1);
+    const [pageSizeBlog, setPageSizeBlog] = useState<number>(5);
+    const [pageIndexBlog, setPageIndexBlog] = useState<number>(1);
+    const [selectedButton, setSelectedButton] = useState('');
+    const [selectedTab, setSelectedTab] = useState<string>('ALL');
+    const [data, setData] = useState<UserBlogEntity | null>(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [soundInstance, setSoundInstance] = useState<Sound | null>(null);
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [isAvatarMenuVisible, setAvatarMenuVisible] = useState(false);
+    const [listChecked, setListChecked] = useState<number[]>(typeCheckBoxFilters.filter(x => x.checked).map(x => x.id));
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const handleAvatarClick = () => {
         setAvatarMenuVisible(!isAvatarMenuVisible);
     };
 
     const handleButtonPress = (value: string) => {
         setSelectedButton(value);
-        setSelectedTab(value)
+        setSelectedTab(value);
+        blogRequest.categoryId = value;
+        if (value === 'ALL' || value === '') {
+            blogRequest.categoryId = null;
+
+        }
+        getDataBlog();
     };
 
     const handleStartPlaying = async (filePath: string) => {
@@ -54,6 +108,24 @@ const Discover = ({ navigation }: any) => {
 
     const deleteBlog = async (item: UserBlogEntity) => {
         console.log(item.id);
+    }
+
+    const renderContent = () => {
+        return <FlatList
+            data={dataBlog}
+            keyExtractor={(item) => item?.id ?? ''}
+            onEndReached={loadMoreBlog}
+            onEndReachedThreshold={0.1}
+            renderItem={renderItem}
+        />
+    }
+
+    const renderBlogTextContent = (blog: UserBlogEntity) => {
+        return (
+            <View>
+                <Text style={homeStyles.commentText}> {(blog.content ?? '').length > 200 ? blog.content?.substring(0, 200) + '...' : blog.content} {(blog.content ?? '').length > 200 && <Text onPress={() => navigateBlogDetail(blog)} style={[homeStyles.commentText, { fontWeight: '800' }]}> Xem thêm</Text>}</Text>
+            </View>
+        )
     }
 
     const renderItem = ({ item }: any) => {
@@ -74,7 +146,7 @@ const Discover = ({ navigation }: any) => {
                 <TouchableOpacity onPress={() => navigateBlogDetail(item)}>
                     <View style={[styles.row, styles.spcabetwen]}>
                         <View style={styles.row}>
-                            <Avatar.Image source={{ uri: item.avatar }} size={40} />
+                            <Avatar.Image source={item.isIncognito ? require(`../../assets/images/avatar.png`) : { uri: CONFIG_URL.URL_UPLOAD + item.avatar }} size={40} />
                             <View style={{ marginLeft: 8 }}>
                                 <View style={styles.row}>
                                     <Text style={[styles.text, { fontSize: 14 }]}>{item.isIncognito ? item.incognitoName : item.fullName}</Text>
@@ -96,7 +168,7 @@ const Discover = ({ navigation }: any) => {
                     </View>
                 </TouchableOpacity >
                 <View style={styles.content}>
-                    <Text style={[styles.text, styles.textContent]}>{item.content}</Text>
+                    {renderBlogTextContent(item)}
                     {item.type == 3 && item.poster && (
                         < Image source={{ uri: CONFIG_URL.URL_UPLOAD + item.poster }} style={styles.poster} />
                     )}
@@ -137,7 +209,7 @@ const Discover = ({ navigation }: any) => {
                                 <Text style={[styles.text, styles.feedback]}>{item.totalComment}</Text>
                             </View>
                         </View>
-                        <View style={isFavorite ? styles.favorite : styles.favoriteDefault} onTouchEnd={() => setIsFavorite(!isFavorite)}>
+                        <View style={item.selected ? styles.favorite : styles.favoriteDefault} onTouchEnd={() => setIsFavorite(!isFavorite)}>
                             <Icon color='#FFF' source={'cards-heart'} size={14} />
                         </View>
                     </View>
@@ -146,37 +218,84 @@ const Discover = ({ navigation }: any) => {
         );
     }
 
-    const renderContent = () => {
-        let data = blog.data.items;
+    // LOAD DATA
+    const getDataCategory = async () => {
+        setIsLoading(true);
+        categoryRequest.pagingAndSortingModel.pageIndex = pageIndexCategory;
+        categoryRequest.pagingAndSortingModel.pageSize = pageSizeCategory;
+        categoryRequest.pagingAndSortingModel.orderColumn = 'Name';
+        categoryRequest.pagingAndSortingModel.orderDirection = 'asc';
+        await categoryService.getList(categoryRequest).then(res => {
+            if (res?.data.code === STATUS_REPONSE_API.OK) {
+                setDataCategory(res.data.data?.items ?? []);
+                setIsLoading(false);
+            }
+            else {
+                Alert.alert(res?.data.message ?? 'Error');
+                setIsLoading(false);
+            }
+        });
+    }
 
-        switch (selectedTab) {
-            case 'post':
-                return <FlatList
-                    data={data}
-                    keyExtractor={(item) => item.id}
-                    renderItem={renderItem}
-                />
-            case 'hot':
-                const dataHost = data.filter(item => item.code === '001');
+    const getDataBlog = async () => {
+        setIsLoading(true);
+        blogSearch.pagingAndSortingModel.pageIndex = pageIndexBlog;
+        blogSearch.pagingAndSortingModel.pageSize = pageSizeBlog;
+        blogSearch.pagingAndSortingModel.orderColumn = 'CreatedAt';
+        blogSearch.pagingAndSortingModel.orderDirection = 'desc';
+        await blogService.getListAllByType(blogRequest).then(res => {
+            if (res?.data.code === STATUS_REPONSE_API.OK) {
+                setDataBlog(res.data.data?.items ?? []);
+                setIsLoading(false);
+            }
+            else {
+                Alert.alert(res?.data.message ?? 'Error');
+                setIsLoading(false);
+            }
+        });
+    }
 
-                return <FlatList
-                    data={dataHost}
-                    keyExtractor={(item) => item.id}
-                    renderItem={renderItem}
-                />
-            case 'slur':
-                const dataSlur = data.filter(item => item.code === '002');
+    const loadMoreCategory = async () => {
+        setPageSizeCategory(pageSizeCategory + 1);
+        getDataCategory();
+        console.log('Load more category ' + pageSizeCategory)
+    }
 
-                return <FlatList
-                    data={dataSlur}
-                    keyExtractor={(item) => item.id}
-                    renderItem={renderItem}
-                />
-            default:
-                return null;
-        }
-    };
+    const loadMoreBlog = async () => {
+        setPageSizeBlog(pageSizeBlog + 1);
+        getDataBlog();
+        console.log('Load more blog ' + pageSizeBlog)
+    }
+
+    const filterBlogByType = async (type: TypeCheckboxFilter) => {
+        setDataCheckBoxFilter((prevTypes) =>
+            prevTypes.map((c) =>
+                c.id === type.id ? { ...c, checked: !c.checked } : c
+            )
+        );
+        console.log(typeCheckBoxFilters.filter(x => x.checked).map(x => x.id));
+        // if (!(typeCheckBoxFilters.filter(x => x.checked).length > 0)) {
+        //     setDataBlog([]);
+        // }
+        // else {
+        //     setListChecked(typeCheckBoxFilters.filter(x => x.checked).map(x => x.id))
+        //     console.log(listChecked);
+        //     getDataBlog()
+        // }
+    }
+
+    const navigateCreateBlog = async () => {
+        await Common.dismissKeyboard(() => {
+            navigation.navigate(SCREEN_CONSTANT.CREATE_BLOG);
+        });
+    }
+
     useEffect(() => {
+        getDataCategory();
+        getDataBlog();
+        return () => {
+            console.log('Component will unmount. Clean-up if needed.');
+        };
     }, []);
 
     return (
@@ -186,6 +305,9 @@ const Discover = ({ navigation }: any) => {
                 <View style={[styles.header, styles.row]}>
                     <Text style={styles.textHeader}>Bài đăng</Text>
                     <View style={[styles.row]}>
+                        {selectedTab != 'ALL' && (<TouchableOpacity onPress={() => navigateCreateBlog()}>
+                            <Avatar.Image style={{ backgroundColor: '#817a87', marginRight: 10 }} source={ImageAssets.plus} size={30} />
+                        </TouchableOpacity>)}
                         <TouchableOpacity onPress={() => handleAvatarClick()}>
                             <Avatar.Image style={{ backgroundColor: '#817a87', marginRight: 10 }} source={ImageAssets.filter} size={30} />
                         </TouchableOpacity>
@@ -193,25 +315,26 @@ const Discover = ({ navigation }: any) => {
                     </View>
                 </View>
                 <View style={styles.buttonContainer}>
-                    <TouchableOpacity
-                        style={[styles.button, selectedTab === 'post' && styles.selectedButton, { marginLeft: -6 }]}
-                        onPress={() => handleButtonPress('post')}
-                    >
-                        <Text style={styles.buttonText}>Tất cả bài đăng</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.button, selectedTab === 'hot' && styles.selectedButton]}
-                        onPress={() => handleButtonPress('hot')}
-                    >
-                        <Text style={styles.buttonText}>Nổi bật</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.button, selectedTab === 'slur' && styles.selectedButton]}
-                        onPress={() => handleButtonPress('slur')}
-                    >
-                        <Text style={styles.buttonText}>Nói xấu công ty</Text>
-                    </TouchableOpacity>
+                    <ScrollView horizontal onMomentumScrollEnd={() => { loadMoreCategory() }}>
+                        {isLoading ? <ActivityIndicator animating={true} color='#FE2083' /> : <></>}
+                        <TouchableOpacity
+                            style={[styles.button, selectedTab === 'ALL' && styles.selectedButton]}
+                            onPress={() => handleButtonPress('ALL')}
+                        >
+                            <Text style={styles.buttonText}>Tất cả bài đăng</Text>
+                        </TouchableOpacity>
+                        {dataCategory.map((category) => (
+                            <TouchableOpacity
+                                key={category.id}
+                                style={[styles.button, selectedTab === category.id && styles.selectedButton]}
+                                onPress={() => handleButtonPress(category.id ?? '')}
+                            >
+                                <Text style={styles.buttonText}>{category.name ?? ''}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
                 </View>
+
                 {renderContent()}
             </View>
             {isAvatarMenuVisible && (
@@ -221,13 +344,7 @@ const Discover = ({ navigation }: any) => {
                             <View key={type.id} style={styles.menuContent}>
                                 <Checkbox.Android
                                     status={type.checked == true ? 'checked' : 'unchecked'}
-                                    onPress={() => {
-                                        setDataCheckBoxFilter((prevTypes) =>
-                                            prevTypes.map((c) =>
-                                                c.id === type.id ? { ...c, checked: !c.checked } : c
-                                            )
-                                        );
-                                    }}
+                                    onPress={() => filterBlogByType(type)}
                                     color={type.checked ? '#FE2083' : ''}
                                 />
                                 <Text style={styles.text}>{type.name}</Text>

@@ -41,8 +41,7 @@ export const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 20,
         alignItems: 'center',
-        justifyContent: 'center',
-        marginLeft: 6
+        justifyContent: 'flex-start',
     },
     selectedButton: {
         backgroundColor: '#FE2083',
