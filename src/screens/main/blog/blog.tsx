@@ -147,6 +147,7 @@ const BlogScreen = ({ navigation }: any) => {
                     outlineStyle={{ borderRadius: 20, borderColor: '#1B1627' }}
                     placeholder="Viết bình luận" mode="outlined"
                     style={blogStyles.input}
+                    textColor="#FFF"
                     value={commentText}
                     onChangeText={setCommentText}
                     right={<TextInput.Icon icon={'send'} color="#FFF" size={20} />} />
