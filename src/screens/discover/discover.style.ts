@@ -130,6 +130,10 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingHorizontal: 8
     },
+    hashtag: {
+        margin: 5,
+        color: '#FE2083'
+    },
     polligon11: {
         backgroundColor: '#FFFFFF',
         width: 40,

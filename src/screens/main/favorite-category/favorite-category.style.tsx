@@ -45,6 +45,7 @@ export const favoriteCategoryStyles =
             height: '100%',
             resizeMode: 'contain',
             overflow: 'hidden',
+            borderRadius: 10
         },
         nameCategory: {
             width: '100%',

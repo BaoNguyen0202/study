@@ -8,15 +8,15 @@ import { useMMKVString } from 'react-native-mmkv'
 const HelloScreen = ({ navigation }: any) => {
     const [fcmToken, setToken] = useMMKVString('FCM_TOKEN');
 
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            if (fcmToken) {
-                navigation.navigate(SCREEN_CONSTANT.CATEGORY_TYPE);
-            }
-        }, 1000);
+    // useEffect(() => {
+    //     const timeoutId = setTimeout(() => {
+    //         if (fcmToken) {
+    //             navigation.navigate(SCREEN_CONSTANT.CATEGORY_TYPE);
+    //         }
+    //     }, 1000);
 
-        return () => clearTimeout(timeoutId);
-    }, [fcmToken]);
+    //     return () => clearTimeout(timeoutId);
+    // }, [fcmToken]);
 
 
     return (

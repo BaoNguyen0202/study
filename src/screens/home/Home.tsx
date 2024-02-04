@@ -12,8 +12,11 @@ import { UserBlogEntity, UserBlogEntitySearch } from '../../model/blog-entity';
 import { BlogService } from '../../service/blog-service';
 import { Ultility } from '../../common/ultility';
 import { styles } from '../discover/discover.style';
+import { useIsFocused, useRoute } from '@react-navigation/native';
 
 const HomeScreen = ({ navigation }: any) => {
+    const isFocused = useIsFocused();
+    const categoryTypeSelectedIds = Common.storage.getString('category_type_selected_ids');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const _handleMore = async (type: any = '') => {
         if (type === 'CATEGORY') {
@@ -55,7 +58,6 @@ const HomeScreen = ({ navigation }: any) => {
     const blogService = new BlogService();
 
     //EntitySearch
-    const categoryTypeSelectedIds = Common.storage.getString('category_type_selected_ids');
     const categorySearch: UserCategoryEntitySearch = {
         id: null,
         createdAt: null,
@@ -71,7 +73,6 @@ const HomeScreen = ({ navigation }: any) => {
         pagingAndSortingModel: new PaginationEntity
     }
     const [categoryRequest, setCategorySearch] = useState(categorySearch);
-
     const podcastSearch: UserBlogEntitySearch = {
         id: null,
         createdAt: null,
@@ -88,7 +89,6 @@ const HomeScreen = ({ navigation }: any) => {
         pagingAndSortingModel: new PaginationEntity
     }
     const [podcastRequest, setPodcastSearch] = useState(podcastSearch);
-
     const blogTextSearch: UserBlogEntitySearch = {
         id: null,
         createdAt: null,
@@ -124,9 +124,10 @@ const HomeScreen = ({ navigation }: any) => {
     }
     const getDataPodcast = async () => {
         setIsLoading(true);
+        podcastRequest.types = [2];
         podcastRequest.pagingAndSortingModel.pageIndex = pageIndexPodcast;
         podcastRequest.pagingAndSortingModel.pageSize = pageSizePodcast;
-        await blogService.getList(podcastRequest).then(res => {
+        await blogService.getListAllByType(podcastRequest).then(res => {
             if (res?.data.code === STATUS_REPONSE_API.OK) {
                 setDataPodcast(res.data.data?.items ?? []);
                 setIsLoading(false);
@@ -137,12 +138,11 @@ const HomeScreen = ({ navigation }: any) => {
             }
         });
     }
-
     const getDataBlogText = async () => {
         setIsLoading(true);
         blogTextRequest.pagingAndSortingModel.pageIndex = pageIndexBlogText;
         blogTextRequest.pagingAndSortingModel.pageSize = pageSizeBlogText;
-        await blogService.getList(blogTextRequest).then(res => {
+        await blogService.getListAllByType(blogTextRequest).then(res => {
             if (res?.data.code === STATUS_REPONSE_API.OK) {
                 setDataBlogText(res.data.data?.items ?? []);
                 setIsLoading(false);
@@ -153,15 +153,6 @@ const HomeScreen = ({ navigation }: any) => {
             }
         });
     }
-
-    useEffect(() => {
-        getDataCategory();
-        getDataPodcast();
-        getDataBlogText();
-        return () => {
-            console.log('Component will unmount. Clean-up if needed.');
-        };
-    }, []);
 
     const renderBlogTextContent = (blogText: UserBlogEntity) => {
         return (
@@ -193,16 +184,17 @@ const HomeScreen = ({ navigation }: any) => {
     }
 
     const saveFavoritePodcast = async (podcast: UserBlogEntity) => {
+        let _selected = !podcast.selected;
         let req = {
             userAccountId: 'cde87cf5-06de-47ac-9574-ac22d89c9432',
-            categoryId: podcast.id,
-            selected: !podcast.selected
+            blogId: podcast.id,
+            selected: _selected
         }
         let response = await blogService.saveFavoriteBlog(req);
         if (response?.data.code === STATUS_REPONSE_API.OK) {
             setDataPodcast((prevPodcasts) =>
                 prevPodcasts.map((c) =>
-                    c.id === podcast.id ? { ...c, selected: !c.selected } : c
+                    c.id === podcast.id ? { ...c, selected: _selected, totalLike: (_selected ? (c.totalLike ?? 0) + 1 : (c.totalLike ?? 0) - 1) } : c
                 )
             );
             Alert.alert('Thao tác thành công');
@@ -214,16 +206,17 @@ const HomeScreen = ({ navigation }: any) => {
     }
 
     const saveFavoriteBlogText = async (blogText: UserBlogEntity) => {
+        let _selected = !blogText.selected;
         let req = {
             userAccountId: 'cde87cf5-06de-47ac-9574-ac22d89c9432',
-            categoryId: blogText.id,
-            selected: !blogText.selected
+            blogId: blogText.id,
+            selected: _selected
         }
         let response = await blogService.saveFavoriteBlog(req);
         if (response?.data.code === STATUS_REPONSE_API.OK) {
-            setDataPodcast((prevBlogsText) =>
+            setDataBlogText((prevBlogsText) =>
                 prevBlogsText.map((c) =>
-                    c.id === blogText.id ? { ...c, selected: !c.selected } : c
+                    c.id === blogText.id ? { ...c, selected: _selected, totalLike: (_selected ? (c.totalLike ?? 0) + 1 : (c.totalLike ?? 0) - 1) } : c
                 )
             );
             Alert.alert('Thao tác thành công');
@@ -243,6 +236,30 @@ const HomeScreen = ({ navigation }: any) => {
         getDataCategory();
         console.log('Load more category ' + pageSizeCategory)
     }
+
+    const navigateBlogDetail = async (item: UserBlogEntity) => {
+        await Common.dismissKeyboard(() => {
+            navigation.navigate(SCREEN_CONSTANT.BLOG, item);
+        });
+    }
+
+    const navigateDiscovery = async (item: UserCategoryEntity) => {
+        await Common.dismissKeyboard(() => {
+            navigation.navigate(SCREEN_CONSTANT.DISCOVER, item);
+        });
+    }
+
+    useEffect(() => {
+        if (isFocused) {
+            getDataCategory();
+            getDataPodcast();
+            getDataBlogText();
+        }
+        return () => {
+            console.log('Component will unmount. Clean-up if needed.');
+        };
+    }, [isFocused]);
+
 
     return (
         <ScrollView style={{
@@ -284,23 +301,30 @@ const HomeScreen = ({ navigation }: any) => {
                 <View style={{ flex: 1, height: HEIGHT / 5 }}>
                     <ScrollView horizontal style={{ flexDirection: 'row' }} onMomentumScrollEnd={() => { loadMoreCategory() }}>
                         {dataCategory.map((category) => (
-                            <Surface key={category.id} style={homeStyles.cardCustom} elevation={4}>
-                                <ImageBackground
-                                    source={{ uri: CONFIG_URL.URL_UPLOAD + category.image }}
-                                    style={homeStyles.backgroundImage}
-                                >
-                                    <View style={homeStyles.nameCategory}>
-                                        <TouchableOpacity style={category.selected ? homeStyles.bookMarkSelected : homeStyles.bookMarkDisabled} onPress={() => saveFavoriteCategory(category)}>
-                                            <Icon color='#FFFFFF' source={'bookmark'} size={15}></Icon>
-                                        </TouchableOpacity>
-                                        <View style={homeStyles.paper}>
-                                            <Text style={homeStyles.centeredText}>
-                                                {category.name}
-                                            </Text>
+                            <TouchableOpacity key={category.id} onPress={() => navigateDiscovery(category)}>
+                                <Surface key={category.id} style={homeStyles.cardCustom} elevation={4}>
+                                    <ImageBackground
+                                        source={{ uri: CONFIG_URL.URL_UPLOAD + category.image }}
+                                        style={homeStyles.backgroundImage}
+                                    >
+                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                            <View style={[discoverStyles.hashtag, { width: '60%' }]}>
+                                                <Text style={{ color: '#FE2083', fontWeight: 'bold' }}>#{category.hashtag?.toString().split('_')[0]}</Text>
+                                            </View>
+                                            <TouchableOpacity style={category.selected ? homeStyles.bookMarkSelected : homeStyles.bookMarkDisabled} onPress={() => saveFavoriteCategory(category)}>
+                                                <Icon color='#FFFFFF' source={'bookmark'} size={15}></Icon>
+                                            </TouchableOpacity>
                                         </View>
-                                    </View>
-                                </ImageBackground>
-                            </Surface>
+                                        <View style={homeStyles.nameCategory}>
+                                            <View style={homeStyles.paper}>
+                                                <Text style={homeStyles.centeredText}>
+                                                    {category.name}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                    </ImageBackground>
+                                </Surface>
+                            </TouchableOpacity>
                         ))}
                     </ScrollView>
                 </View>
@@ -323,7 +347,7 @@ const HomeScreen = ({ navigation }: any) => {
                                     style={homeStyles.image}
                                     alt='no image'
                                 />
-                                <View style={homeStyles.cardContent}>
+                                <TouchableOpacity style={homeStyles.cardContent} onPress={() => navigateBlogDetail(podcast)}>
                                     <Text style={homeStyles.namePodcast}>{podcast.name}</Text>
                                     <View style={{ flexDirection: 'row' }}>
                                         <Icon color='#C2C2C2' source={'volume-high'} size={14}></Icon>
@@ -338,7 +362,7 @@ const HomeScreen = ({ navigation }: any) => {
                                             <Icon color='#FFFFFF' source={'heart'} size={15}></Icon>
                                         </TouchableOpacity>
                                     </View>
-                                </View>
+                                </TouchableOpacity>
                             </Surface>
                         ))}
                     </ScrollView>
@@ -355,7 +379,7 @@ const HomeScreen = ({ navigation }: any) => {
                 </View>
                 <View style={{ flex: 1, height: HEIGHT / 4.5 }}>
                     {dataBlogText.map((blogText) => (
-                        <View key={blogText.id} style={discoverStyles.containerItem}>
+                        <TouchableOpacity key={blogText.id} style={discoverStyles.containerItem} onPress={() => navigateBlogDetail(blogText)}>
                             <View style={[discoverStyles.row, discoverStyles.spcabetwen]}>
                                 <View style={discoverStyles.row}>
                                     <Avatar.Image source={blogText.isIncognito ? require(`../../assets/images/avatar.png`) : { uri: CONFIG_URL.URL_UPLOAD + blogText.avatar }} size={40} />
@@ -398,7 +422,7 @@ const HomeScreen = ({ navigation }: any) => {
                                     </TouchableOpacity>
                                 </View>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     ))}
                 </View>
             </View>

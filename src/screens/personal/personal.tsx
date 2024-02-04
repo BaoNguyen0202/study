@@ -25,7 +25,7 @@ const Personal = ({ navigation }: any) => {
     const handleLogout = () => {
         setToken('');
         Common.storage.clearAll();
-        navigation.navigate(SCREEN_CONSTANT.LOG_IN);
+        navigation.navigate(SCREEN_CONSTANT.HELLO);
     }
     const showModal = async () => {
         await fetchUserData();

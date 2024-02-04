@@ -9,6 +9,7 @@ import { ActivityIndicator, Appbar, Avatar, Icon, MD2Colors, Searchbar, Surface 
 import { HEIGHT } from "../../../common/constant";
 import { favoriteCategoryStyles } from "../favorite-category/favorite-category.style";
 import { useNavigation } from "@react-navigation/native";
+import { styles } from "../../discover/discover.style";
 
 const CategoryScreen = ({ navigation }: any) => {
     const [searchQuery, setSearchQuery] = useState<string>('');
@@ -92,6 +93,13 @@ const CategoryScreen = ({ navigation }: any) => {
         }
     }
 
+    const navigateDiscovery = async (item: UserCategoryEntity) => {
+        await Common.dismissKeyboard(() => {
+            console.log(item.name);
+            navigation.navigate(SCREEN_CONSTANT.DISCOVER, item);
+        });
+    }
+
     useEffect(() => {
         getData();
         return () => {
@@ -100,23 +108,30 @@ const CategoryScreen = ({ navigation }: any) => {
     }, []);
 
     const renderItem = ({ item }: any) => (
-        <Surface key={item.id} style={favoriteCategoryStyles.cardCustom} elevation={4}>
-            <ImageBackground
-                source={{ uri: CONFIG_URL.URL_UPLOAD + item.image }}
-                style={favoriteCategoryStyles.backgroundImage}
-            >
-                <View style={favoriteCategoryStyles.nameCategory}>
-                    <TouchableOpacity style={item.selected ? favoriteCategoryStyles.bookMarkSelected : favoriteCategoryStyles.bookMarkDisabled} onPress={() => saveFavoriteCategory(item)}>
-                        <Icon color='#FFFFFF' source={'bookmark'} size={15}></Icon>
-                    </TouchableOpacity>
-                    <View style={favoriteCategoryStyles.paper}>
-                        <Text style={favoriteCategoryStyles.centeredText}>
-                            {item.name}
-                        </Text>
+        <TouchableOpacity onPress={() => navigateDiscovery(item)}>
+            <Surface key={item.id} style={favoriteCategoryStyles.cardCustom} elevation={4}>
+                <ImageBackground
+                    source={{ uri: CONFIG_URL.URL_UPLOAD + item.image }}
+                    style={favoriteCategoryStyles.backgroundImage}
+                >
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <View style={[styles.hashtag, { width: '60%' }]}>
+                            <Text style={{ color: '#FE2083', fontWeight: 'bold' }}>#{item.hashtag?.toString().split('_')[0]}</Text>
+                        </View>
+                        <TouchableOpacity style={item.selected ? favoriteCategoryStyles.bookMarkSelected : favoriteCategoryStyles.bookMarkDisabled} onPress={() => saveFavoriteCategory(item)}>
+                            <Icon color='#FFFFFF' source={'bookmark'} size={15}></Icon>
+                        </TouchableOpacity>
                     </View>
-                </View>
-            </ImageBackground>
-        </Surface>
+                    <View style={favoriteCategoryStyles.nameCategory}>
+                        <View style={favoriteCategoryStyles.paper}>
+                            <Text style={favoriteCategoryStyles.centeredText}>
+                                {item.name}
+                            </Text>
+                        </View>
+                    </View>
+                </ImageBackground>
+            </Surface>
+        </TouchableOpacity>
     );
 
     return (

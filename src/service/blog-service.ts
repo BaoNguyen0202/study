@@ -38,4 +38,12 @@ export class BlogService {
             console.error('Error:', error);
         }
     };
+
+    addRating = async (request: RatingBlogEntity): Promise<AxiosResponse<ResponseAPI<RatingBlogEntity>> | undefined | null> => {
+        try {
+            return await axios.post<ResponseAPI<RatingBlogEntity>>(CONFIG_URL.API + 'US_Blog/add-rating-by-user', request);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
 }

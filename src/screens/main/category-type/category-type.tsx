@@ -5,11 +5,12 @@ import { PaginationEntity } from "../../../model/pagination-entity";
 import { CONFIG_URL, SCREEN_CONSTANT, STATUS_REPONSE_API } from "../../../config/configuration";
 import { Alert, ScrollView, StyleSheet, View } from "react-native";
 import { CategoryTypeEntity } from "../../../model/category-type-entity";
-import { Avatar, Button, Chip, Text } from 'react-native-paper';
+import { ActivityIndicator, Avatar, Button, Chip, Text } from 'react-native-paper';
 import { UserAccountCategoryType } from "../../../model/user-account-entity";
 import { Common } from "../../../utils";
 import { useTheme } from '@react-navigation/native'
 import { WIDTH } from "../../../common/constant";
+import Toast from "react-native-toast-message";
 
 interface ChipSelected {
     id?: number | null;
@@ -18,6 +19,7 @@ interface ChipSelected {
 }
 
 const CategoryTypeScreen = ({ navigation }: any) => {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const categoryTypeService = new CategoryTypeService();
     const [pageSize, setPageSize] = useState<number>(1000000);
     const [pageIndex, setPageIndex] = useState<number>(1);
@@ -67,15 +69,12 @@ const CategoryTypeScreen = ({ navigation }: any) => {
                 categoryTypeIds: data.filter(x => x.selected == true).map(x => x.id)
             };
             const response = await categoryTypeService.addUserCategoryType(request);
-
+            await Common.storage.set('category_type_selected_ids', JSON.stringify(request.categoryTypeIds));
             if (response?.data?.code === STATUS_REPONSE_API.OK) {
+                setIsLoading(true);
                 await Common.dismissKeyboard(() => {
                     navigation.navigate(SCREEN_CONSTANT.MAIN_TAB);
-
-                    Common.storage.set('category_type_selected_ids', JSON.stringify(data.map(x => x.id)));
-
                 });
-                console.log('success');
             } else {
                 console.error('Failed:', response?.data.message);
                 Alert.alert('Failed', response?.data.message ?? 'Error');
@@ -93,6 +92,7 @@ const CategoryTypeScreen = ({ navigation }: any) => {
 
     return (
         <View style={styles.headerContainer}>
+            <Toast />
             <Text style={styles.centeredTextTitle}>Hãy lựa chọn chủ đề phù hợp với bạn!</Text>
             <ScrollView contentContainerStyle={styles.container}>
                 {data.map((tag, index) => (
@@ -109,6 +109,7 @@ const CategoryTypeScreen = ({ navigation }: any) => {
                     </Chip>
                 ))}
             </ScrollView>
+            {isLoading ? <ActivityIndicator animating={true} color='#FE2083' /> : <></>}
             {
                 data.filter(x => x.selected === true).length > 0 ?
                     (<Button

@@ -1,20 +1,68 @@
-import { View, Text, Image, TouchableOpacity, Pressable, SafeAreaView, FlatList, StyleSheet, ImageBackground, ActivityIndicator } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, Image, TouchableOpacity, Pressable, SafeAreaView, FlatList, StyleSheet, ImageBackground, ActivityIndicator, Alert } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import LinearGradient from 'react-native-linear-gradient';
 import { musiclibrary } from '../../../../data';
 import { Appbar, Icon, Searchbar } from 'react-native-paper';
 import { ImageAssets } from '../../../assets';
 import { favoriteCategoryStyles } from '../favorite-category/favorite-category.style';
-import { HEIGHT } from '../../../common/constant';
-import { SCREEN_CONSTANT } from '../../../config/configuration';
+import { HEIGHT, WIDTH } from '../../../common/constant';
+import { CONFIG_URL, SCREEN_CONSTANT, STATUS_REPONSE_API } from '../../../config/configuration';
 import { Common } from '../../../utils';
-import { UserBlogEntity } from '../../../model/blog-entity';
+import { UserBlogEntity, UserBlogEntitySearch } from '../../../model/blog-entity';
 import { trackListStyles } from './track-list.styes';
+import { useRoute } from '@react-navigation/native';
+import { UserCategoryEntity } from '../../../model/category-entity';
+import { PaginationEntity } from '../../../model/pagination-entity';
+import { Ultility } from '../../../common/ultility';
+import { BlogService } from '../../../service/blog-service';
 
 const TrackListScreen = ({ navigation }: any) => {
+    const categoryTypeSelectedIds = Common.storage.getString('category_type_selected_ids');
+    const route = useRoute();
+    const [category, setCategory] = useState<UserCategoryEntity | null | undefined>(route.params);
     const [isSearch, setIsSearch] = useState<boolean>(false);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const blogService = new BlogService();
+    const trackListSearch: UserBlogEntitySearch = {
+        id: null,
+        createdAt: null,
+        createdBy: null,
+        updatedAt: null,
+        updatedBy: null,
+        deletedAt: null,
+        deletedBy: null,
+        isSoftDeleted: null,
+        searchString: null,
+        userAccountId: Ultility.getUserInfo().id,
+        categoryTypeIds: categoryTypeSelectedIds ? JSON.parse(categoryTypeSelectedIds) : [],
+        type: null,
+        types: [2],
+        categoryId: null,
+        pagingAndSortingModel: new PaginationEntity
+    }
+    const [request, setTrackListSearch] = useState(trackListSearch);
+    const [data, setData] = useState<UserBlogEntity[]>([]);
+    const [pageSize, setPageSize] = useState<number>(20);
+    const [pageIndex, setPageIndex] = useState<number>(1);
+    const getDataBlog = async () => {
+        setIsLoading(true);
+        request.pagingAndSortingModel.pageIndex = pageIndex;
+        request.pagingAndSortingModel.pageSize = pageSize;
+        request.pagingAndSortingModel.orderColumn = 'Name';
+        request.pagingAndSortingModel.orderDirection = 'asc';
+        await blogService.getListAllByType(request).then(res => {
+            if (res?.data.code === STATUS_REPONSE_API.OK) {
+                setData(res.data.data?.items ?? []);
+                setIsLoading(false);
+            }
+            else {
+                Alert.alert(res?.data.message ?? 'Error');
+                setIsLoading(false);
+            }
+        });
+    }
+
     const _handleSearch = () => {
         setIsSearch(!isSearch);
     };
@@ -46,10 +94,10 @@ const TrackListScreen = ({ navigation }: any) => {
                 <View style={[favoriteCategoryStyles.section, { height: HEIGHT / 20 }]}>
                     <Appbar.Header style={favoriteCategoryStyles.header}>
                         <View style={favoriteCategoryStyles.titleContainer}>
-                            <TouchableOpacity style={favoriteCategoryStyles.iconheader} onPress={() => navigation.goBack(SCREEN_CONSTANT.HOME)}>
+                            <TouchableOpacity style={favoriteCategoryStyles.iconheader} onPress={() => navigation.goBack()}>
                                 <Icon source={'chevron-left'} color="#FFF" size={24} />
                             </TouchableOpacity>
-                            <Text style={[favoriteCategoryStyles.appbarText, { textAlign: 'center' }]}>Công việc, sự nghiệp</Text>
+                            <Text style={[favoriteCategoryStyles.appbarText, { textAlign: 'center', width: WIDTH / 2 }]}>{category?.name}</Text>
                             <Appbar.Action icon="magnify" onPress={_handleSearch} color={'#FFFFFF'} />
                         </View>
                     </Appbar.Header>
@@ -59,8 +107,8 @@ const TrackListScreen = ({ navigation }: any) => {
                 colors={['#FE2083', 'rgb(223 168 182)', '#191414']}
                 style={trackListStyles.linearGradient}>
                 <Image
-                    style={{ width: 200, height: 200 }}
-                    source={require('../../../assets/images/category_1.png')}
+                    style={{ width: WIDTH - 150, height: 200 }}
+                    source={{ uri: CONFIG_URL.URL_UPLOAD + category?.image ?? '' }}
                 />
             </LinearGradient>
             <TouchableOpacity style={trackListStyles.shuffleButtonContainer}>
@@ -70,6 +118,37 @@ const TrackListScreen = ({ navigation }: any) => {
                     <Icon color='#fff' source={'play'} size={25} />
                 </View>
             </TouchableOpacity>
+            {data.map((track) => (
+                <TouchableOpacity key={track.id} onPress={() => navigateToRecordPlayer(track)}>
+                    <View style={[trackListStyles.row, { backgroundColor: 'rgb(223 168 182)', height: 54, borderRadius: 12, marginTop: 10 }]}>
+                        <View style={[trackListStyles.leftPlay]}>
+                            <ImageBackground
+                                source={{ uri: CONFIG_URL.URL_UPLOAD + track.poster ?? '' }}
+                            >
+                                <View style={trackListStyles.polligon11}>
+                                    <View style={trackListStyles.polligon10}>
+                                    </View>
+                                </View>
+                            </ImageBackground>
+                            <View style={{ position: 'absolute' }}>
+                                <Icon color='#fff' source={'pause'} size={25} />
+                            </View>
+                        </View>
+                        <View style={{ marginLeft: 8, marginVertical: 8 }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <Text style={[trackListStyles.text, { fontSize: 14, fontWeight: '500', width: WIDTH - 100 }]}><Image source={ImageAssets.Chart} style={{ position: 'absolute', width: 14, height: 14 }} /> {track.name}</Text>
+                                <Text style={[trackListStyles.text, { fontSize: 14, fontWeight: '500', position: 'absolute', right: 0, top: 8, flexDirection: 'row' }]}>
+                                    <Icon color={track.selected ? '#FE2083' : '#FFF'} source={'cards-heart'} size={14} /> {track.totalLike}    <Icon color='#FFF' source={'dots-horizontal-circle'} size={14} /> {track.totalComment}
+                                </Text>
+                            </View>
+                            <View style={[trackListStyles.row, { marginTop: 4 }]}>
+                                <Icon color='#FFF' source={'volume-high'} size={14} />
+                                <Text style={[{ fontSize: 10, color: '#FFF', justifyContent: 'center', marginLeft: 4 }, trackListStyles.feedback]}>00:00:00</Text>
+                            </View>
+                        </View>
+                    </View>
+                </TouchableOpacity>
+            ))}
         </>
     );
 
@@ -88,10 +167,14 @@ const TrackListScreen = ({ navigation }: any) => {
                                     </View>
                                 </View>
                             </ImageBackground>
-                            <Image source={ImageAssets.Polygon1} style={{ position: 'absolute' }} />
                         </View>
                         <View style={{ marginLeft: 8, marginVertical: 8 }}>
-                            <Text style={[trackListStyles.text, { fontSize: 14, fontWeight: '500' }]}>Chửi công ty lofi cực chill</Text>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <Text style={[trackListStyles.text, { fontSize: 14, fontWeight: '500', width: WIDTH - 100 }]}><Image source={ImageAssets.Chart} style={{ position: 'absolute', width: 14, height: 14 }} /> Chửi công ty lofi cực chill</Text>
+                                <Text style={[trackListStyles.text, { fontSize: 14, fontWeight: '500', position: 'absolute', right: 0, top: 8, flexDirection: 'row' }]}>
+                                    <Icon color='#C2C2C2' source={'cards-heart'} size={14} /> 0   <Icon color='#C2C2C2' source={'dots-horizontal-circle'} size={14} /> 0
+                                </Text>
+                            </View>
                             <View style={[trackListStyles.row, { marginTop: 4 }]}>
                                 <Icon color='#C2C2C2' source={'volume-high'} size={14} />
                                 <Text style={[{ fontSize: 10, color: '#C2C2C2', justifyContent: 'center', marginLeft: 4 }, trackListStyles.feedback]}>00:00:00</Text>
@@ -102,6 +185,13 @@ const TrackListScreen = ({ navigation }: any) => {
             </>
         );
     };
+
+    useEffect(() => {
+        getDataBlog();
+        return () => {
+            console.log('Component will unmount. Clean-up if needed.');
+        };
+    }, []);
 
     return (
         <View style={trackListStyles.container}>

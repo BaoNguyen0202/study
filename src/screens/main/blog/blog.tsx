@@ -26,7 +26,12 @@ const BlogScreen = ({ navigation }: any) => {
     const [commentText, setCommentText] = useState('');
 
     const blogService = new BlogService();
-
+    const ratingInsert: RatingBlogEntity = {
+        id: null,
+        blogId: data?.id,
+        userAccountId: Ultility.getUserInfo().id,
+        comment: commentText,
+    }
     const ratingSearch: RatingBlogEntitySearch = {
         id: null,
         createdAt: null,
@@ -46,8 +51,21 @@ const BlogScreen = ({ navigation }: any) => {
         console.log(data?.id);
     }
     const saveFavoriteBlog = async () => {
-        setData(data);
-        Alert.alert('Thao tác thành công');
+        let _selected = !data?.selected;
+        let req = {
+            userAccountId: 'cde87cf5-06de-47ac-9574-ac22d89c9432',
+            blogId: data?.id,
+            selected: _selected
+        }
+        let response = await blogService.saveFavoriteBlog(req);
+        if (response?.data.code === STATUS_REPONSE_API.OK) {
+            setData({ ...data, selected: _selected, totalLike: (_selected ? (data?.totalLike ?? 0) + 1 : (data?.totalLike ?? 0) - 1) });
+            Alert.alert('Thao tác thành công');
+        }
+        else {
+            console.error('Failed:', response?.data.message);
+            Alert.alert('Failed', response?.data.message ?? '');
+        }
     }
     const handleStartPlaying = async () => {
         await Common.dismissKeyboard(() => {
@@ -64,7 +82,6 @@ const BlogScreen = ({ navigation }: any) => {
         await blogService.getListRating(ratingSearch).then(res => {
             if (res?.data.code === STATUS_REPONSE_API.OK) {
                 setDataRating(res.data.data?.items ?? []);
-                console.log(ratingSearch);
                 setIsLoading(false);
             }
             else {
@@ -72,6 +89,25 @@ const BlogScreen = ({ navigation }: any) => {
                 setIsLoading(false);
             }
         });
+    }
+
+    const addRatingBlog = async () => {
+        if ((ratingInsert.comment ?? '')?.length > 0) {
+            await blogService.addRating(ratingInsert).then(res => {
+                if (res?.data.code === STATUS_REPONSE_API.OK) {
+                    setCommentText('');
+                    setIsLoading(false);
+                    Alert.alert(res?.data.message ?? '');
+                }
+                else {
+                    Alert.alert(res?.data.message ?? 'Error');
+                    setIsLoading(false);
+                }
+            });
+        }
+        else {
+            Alert.alert('Bình luận không được để trống');
+        }
     }
 
     const loadMoreRating = async () => {
@@ -84,6 +120,14 @@ const BlogScreen = ({ navigation }: any) => {
         return (
             <View>
                 <Text style={homeStyles.commentText}> {(text ?? '').length > 200 ? text?.substring(0, 200) + '...' : text} {(text ?? '').length > 200 && <Text style={[homeStyles.commentText, { fontWeight: '800' }]}> Xem thêm</Text>}</Text>
+            </View>
+        )
+    }
+
+    const renderBlogTextHide = (rating: RatingBlogEntity) => {
+        return (
+            <View>
+                <Text style={[homeStyles.commentText, { color: 'gray' }]}>Bình luận đã bị ẩn vì lý do {rating.reason}</Text>
             </View>
         )
     }
@@ -113,9 +157,22 @@ const BlogScreen = ({ navigation }: any) => {
                                                 </View>
                                             )}
                                         </View>
-                                        <Text style={styles.date}> {Ultility.formatDistanceToNow(data?.createdAt)}</Text>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Text style={styles.date}> {Ultility.formatDistanceToNow(data?.createdAt)}</Text>
+                                            {rating?.userAccountId == Ultility.getUserInfo().id && (
+                                                <View style={[styles.row, styles.spcabetwen, { marginBottom: 5 }]}>
+                                                    <View style={styles.row}>
+                                                    </View>
+                                                    <TouchableOpacity onPress={() => deleteBlog()}>
+                                                        <View style={styles.row}>
+                                                            <Icon color='#FFF' source={'close'} size={17} />
+                                                        </View>
+                                                    </TouchableOpacity>
+                                                </View>
+                                            )}
+                                        </View>
                                     </View>
-                                    {renderBlogTextContent(rating.comment ?? '')}
+                                    {rating.status == 1 ? renderBlogTextHide(rating) : renderBlogTextContent(rating.comment ?? '')}
                                 </View>
                             </View>
                             <View style={[styles.footer, { marginTop: 12, marginLeft: 30 + 16 }]}>
@@ -138,6 +195,7 @@ const BlogScreen = ({ navigation }: any) => {
                 : <></>
         )
     }
+
     const renderInputComent = () => {
         return (
             <View style={[blogStyles.containerInputComent, styles.row, { alignItems: 'center', justifyContent: 'space-between' }]}>
@@ -145,11 +203,12 @@ const BlogScreen = ({ navigation }: any) => {
                 <Icon color='#FFF' source={'keyboard'} size={20} />
                 <TextInput
                     outlineStyle={{ borderRadius: 20, borderColor: '#1B1627' }}
+                    textColor="#FFF"
                     placeholder="Viết bình luận" mode="outlined"
                     style={blogStyles.input}
                     value={commentText}
                     onChangeText={setCommentText}
-                    right={<TextInput.Icon icon={'send'} color="#FFF" size={20} />} />
+                    right={<TextInput.Icon icon={'send'} color="#FFF" size={20} onPress={() => addRatingBlog()} />} />
             </View>
         )
     }
@@ -161,7 +220,7 @@ const BlogScreen = ({ navigation }: any) => {
                         <TouchableOpacity style={favoriteCategoryStyles.iconheader} onPress={() => navigation.goBack()}>
                             <Icon source={'chevron-left'} color="#FFF" size={24} />
                         </TouchableOpacity>
-                        <Text style={[favoriteCategoryStyles.appbarText, { textAlign: 'center' }]}>{data?.isIncognito ? data?.incognitoName : data?.fullName}</Text>
+                        <Text style={[favoriteCategoryStyles.appbarText, { textAlign: 'center' }]}>{data?.name}</Text>
                         <Avatar.Image source={{ uri: CONFIG_URL.URL_UPLOAD + Ultility.getUserInfo().image ?? '' }} size={40} />
                     </View>
                 </Appbar.Header>

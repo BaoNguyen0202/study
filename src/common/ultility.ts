@@ -26,7 +26,13 @@ export class Ultility {
     }
 
     static getUserInfo = () => {
-        const info: UserAccountLoginResponseEntity = JSON.parse(Common.storage.getString('user_info') ?? '');
+        const info: UserAccountLoginResponseEntity = JSON.parse(Common.storage.getString('user_info') ?? '{}');
         return info
     }
+
+    static formatDuration = (seconds: any) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = Math.floor(seconds % 60);
+        return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+    };
 }

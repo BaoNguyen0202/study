@@ -8,13 +8,14 @@ import Sound from 'react-native-sound';
 import { styles } from './discover.style';
 import { Ultility } from '../../common/ultility';
 import { CONFIG_URL, SCREEN_CONSTANT, STATUS_REPONSE_API } from '../../config/configuration';
-import { HEIGHT } from '../../common/constant';
+import { HEIGHT, WIDTH } from '../../common/constant';
 import { Common } from '../../utils';
 import { UserCategoryEntity, UserCategoryEntitySearch } from '../../model/category-entity';
 import { PaginationEntity } from '../../model/pagination-entity';
 import { CategoryService } from '../../service/category-service';
 import { BlogService } from '../../service/blog-service';
 import { homeStyles } from '../home/home.style';
+import { useIsFocused, useRoute } from '@react-navigation/native';
 
 interface TypeCheckboxFilter {
     id: number,
@@ -23,6 +24,9 @@ interface TypeCheckboxFilter {
 }
 
 const Discover = ({ navigation }: any) => {
+    const isFocused = useIsFocused();
+    const route = useRoute();
+    const categorySelected: UserCategoryEntity | null | undefined = route.params;
     const categoryTypeSelectedIds = Common.storage.getString('category_type_selected_ids');
     const listTypeCheckBoxFilter: TypeCheckboxFilter[] = [
         { id: 0, name: 'Văn bản', checked: true },
@@ -96,7 +100,6 @@ const Discover = ({ navigation }: any) => {
     };
 
     const handleStartPlaying = async (filePath: string) => {
-        console.log(filePath);
         // navigation.navigate('', { filePath })
     };
 
@@ -128,9 +131,31 @@ const Discover = ({ navigation }: any) => {
         )
     }
 
+    const saveFavoriteBlog = async (blog: UserBlogEntity) => {
+        let _selected = !blog.selected;
+        let req = {
+            userAccountId: 'cde87cf5-06de-47ac-9574-ac22d89c9432',
+            blogId: blog.id,
+            selected: _selected
+        }
+        let response = await blogService.saveFavoriteBlog(req);
+        if (response?.data.code === STATUS_REPONSE_API.OK) {
+            setDataBlog((prevBlogs) =>
+                prevBlogs.map((c) =>
+                    c.id === blog.id ? { ...c, selected: _selected, totalLike: (_selected ? (c.totalLike ?? 0) + 1 : (c.totalLike ?? 0) - 1) } : c
+                )
+            );
+            Alert.alert('Thao tác thành công');
+        }
+        else {
+            console.error('Failed:', response?.data.message);
+            Alert.alert('Failed', response?.data.message ?? '');
+        }
+    }
+
     const renderItem = ({ item }: any) => {
         return (
-            <View style={styles.containerItem}>
+            <TouchableOpacity style={styles.containerItem} onPress={() => navigateBlogDetail(item)}>
                 {item.userAccountId == Ultility.getUserInfo().id && (
                     <View style={[styles.row, styles.spcabetwen, { marginBottom: 5 }]}>
                         <View style={styles.row}>
@@ -208,12 +233,12 @@ const Discover = ({ navigation }: any) => {
                                 <Text style={[styles.text, styles.feedback]}>{item.totalComment}</Text>
                             </TouchableOpacity >
                         </View>
-                        <View style={item.selected ? styles.favorite : styles.favoriteDefault} onTouchEnd={() => setIsFavorite(!isFavorite)}>
+                        <View style={item.selected ? styles.favorite : styles.favoriteDefault} onTouchEnd={() => saveFavoriteBlog(item)}>
                             <Icon color='#FFF' source={'cards-heart'} size={14} />
                         </View>
                     </View>
                 </View>
-            </View>
+            </TouchableOpacity>
         );
     }
 
@@ -238,10 +263,10 @@ const Discover = ({ navigation }: any) => {
 
     const getDataBlog = async () => {
         setIsLoading(true);
-        blogSearch.pagingAndSortingModel.pageIndex = pageIndexBlog;
-        blogSearch.pagingAndSortingModel.pageSize = pageSizeBlog;
-        blogSearch.pagingAndSortingModel.orderColumn = 'CreatedAt';
-        blogSearch.pagingAndSortingModel.orderDirection = 'desc';
+        blogRequest.pagingAndSortingModel.pageIndex = pageIndexBlog;
+        blogRequest.pagingAndSortingModel.pageSize = pageSizeBlog;
+        blogRequest.pagingAndSortingModel.orderColumn = 'CreatedAt';
+        blogRequest.pagingAndSortingModel.orderDirection = 'desc';
         await blogService.getListAllByType(blogRequest).then(res => {
             if (res?.data.code === STATUS_REPONSE_API.OK) {
                 setDataBlog(res.data.data?.items ?? []);
@@ -290,19 +315,29 @@ const Discover = ({ navigation }: any) => {
     }
 
     useEffect(() => {
+        if (isFocused) {
+            if (categorySelected) {
+                blogRequest.categoryId = categorySelected.id;
+                setSelectedTab(categorySelected.id ?? 'ALL');
+            }
+            else {
+                blogRequest.categoryId = null;
+                setSelectedTab('ALL');
+            }
+        }
         getDataCategory();
         getDataBlog();
         return () => {
             console.log('Component will unmount. Clean-up if needed.');
         };
-    }, []);
+    }, [isFocused]);
 
     return (
         <SafeAreaView style={styles.container}>
             <Image source={ImageAssets.Bg_Image} style={styles.bgImage} />
             <View style={styles.containerContent}>
                 <View style={[styles.header, styles.row]}>
-                    <Text style={styles.textHeader}>Bài đăng</Text>
+                    <Text style={[styles.textHeader, { flexWrap: 'wrap', width: WIDTH / 2 }]}>{route.params ? categorySelected?.name : 'Bài đăng'}</Text>
                     <View style={[styles.row]}>
                         {selectedTab != 'ALL' && (<TouchableOpacity onPress={() => navigateCreateBlog()}>
                             <Avatar.Image style={{ backgroundColor: '#817a87', marginRight: 10 }} source={ImageAssets.plus} size={30} />

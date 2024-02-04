@@ -13,7 +13,7 @@ const App = () => {
     useEffect(() => {
         const connection = createSignalRConnection();
         startConnection(connection);
-        connection.on("ReceiveNotification", (message: Message) => {
+        connection.on("ReceiveNotification", (message: any) => {
             if (Ultility.getUserInfo().id == message.userAccountId) {
                 Toast.show({
                     type: 'error',
@@ -40,7 +40,6 @@ const App = () => {
         <Provider store={store}>
             <PaperProvider>
                 <AppNavigationContainer></AppNavigationContainer>
-                <Toast />
             </PaperProvider>
         </Provider>
     );

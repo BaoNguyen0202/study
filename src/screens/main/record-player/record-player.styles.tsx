@@ -21,10 +21,14 @@ export const recordPlayerStyles =
             color: '#FFFFFF',
         },
         music_logo_view: {
+            marginTop: 10,
             height: "30%",
             width: "100%",
             justifyContent: "center",
             alignItems: "center",
+            borderWidth: 1,
+            borderColor: '#FE2083',
+            borderRadius: 10
         },
         image_view: {
             height: "100%",
@@ -91,7 +95,6 @@ export const recordPlayerStyles =
             flexDirection: "row"
         },
         recently_played_image: {
-            marginTop: 20,
             height: "100%",
             width: "100%",
             borderRadius: 10
