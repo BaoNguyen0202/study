@@ -206,6 +206,7 @@ const BlogScreen = ({ navigation }: any) => {
                     textColor="#FFF"
                     placeholder="Viết bình luận" mode="outlined"
                     style={blogStyles.input}
+                    textColor="#FFF"
                     value={commentText}
                     onChangeText={setCommentText}
                     right={<TextInput.Icon icon={'send'} color="#FFF" size={20} onPress={() => addRatingBlog()} />} />

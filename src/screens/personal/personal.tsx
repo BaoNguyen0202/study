@@ -163,7 +163,9 @@ const Personal = ({ navigation }: any) => {
                 <Text style={styles.textHeader}>Cá nhân</Text>
                 {userData && userData.customer && (
                     <View style={styles.content}>
-                        <Avatar.Image source={{ uri: CONFIG_URL.URL_UPLOAD + userData.image || '' }} size={164} />
+                        <TouchableOpacity style={{ overflow: 'hidden', borderRadius: 82, borderColor: '#FE2083', borderWidth: 1.5, width: 165, height: 165 }}>
+                            <Avatar.Image source={{ uri: CONFIG_URL.URL_UPLOAD + userData.image || '' }} size={164} />
+                        </TouchableOpacity>
                         <Text style={[styles.text, { fontWeight: '700', fontSize: 32 }]}>{userData.customer.fullName}</Text>
                         <View style={[styles.row, { marginVertical: 4 }]}>
                             <Icon color='#C2C2C2' source={'map-marker'} size={20} />

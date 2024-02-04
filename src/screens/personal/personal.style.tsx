@@ -53,6 +53,7 @@ export const styles = StyleSheet.create({
         backgroundColor: '#1A1429',
         marginHorizontal: 24,
         padding: 24,
+        borderRadius: 16
     },
     input: {
         marginVertical: 8
