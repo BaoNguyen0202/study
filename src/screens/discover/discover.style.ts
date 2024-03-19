@@ -182,5 +182,10 @@ export const styles = StyleSheet.create({
         marginTop: 10,
         borderRadius: 12
     },
-
+    modalContent: {
+        backgroundColor: '#1A1429',
+        marginHorizontal: 24,
+        padding: 24,
+        borderRadius: 16,
+    },
 });

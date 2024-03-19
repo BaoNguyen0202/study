@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, FlatList, TouchableHighlight, ImageBackground, ScrollView, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, Avatar, Card, Checkbox, Icon, Menu } from 'react-native-paper';
+import { ActivityIndicator, Avatar, Button, Card, Checkbox, Icon, Menu, Modal } from 'react-native-paper';
 import { ImageAssets } from '../../assets';
 import blog from '../../../blog.json';
 import { UserBlogEntity, UserBlogEntitySearch } from '../../model/blog-entity';
@@ -16,6 +16,9 @@ import { CategoryService } from '../../service/category-service';
 import { BlogService } from '../../service/blog-service';
 import { homeStyles } from '../home/home.style';
 import { useIsFocused, useRoute } from '@react-navigation/native';
+import DeleteModal from '../modal/delete-modal/delete-modal';
+import { deleteModalStyles } from '../modal/delete-modal/delete-modal.style';
+import SuccessModal from '../modal/success-modal/success-modal';
 
 interface TypeCheckboxFilter {
     id: number,
@@ -24,6 +27,12 @@ interface TypeCheckboxFilter {
 }
 
 const Discover = ({ navigation }: any) => {
+    const [visibleSuccessModal, setVisibleSuccessModal] = useState(false);
+    const [visibleModal, setVisibleModal] = useState(false);
+    const hideModal = async () => {
+        setVisibleModal(false);
+        setVisibleSuccessModal(false);
+    };
     const isFocused = useIsFocused();
     const route = useRoute();
     const categorySelected: UserCategoryEntity | null | undefined = route.params;
@@ -44,7 +53,7 @@ const Discover = ({ navigation }: any) => {
         deletedBy: null,
         isSoftDeleted: null,
         searchString: null,
-        userAccountId: 'cde87cf5-06de-47ac-9574-ac22d89c9432',
+        userAccountId: Ultility.getUserInfo().id,
         categoryTypeIds: categoryTypeSelectedIds ? JSON.parse(categoryTypeSelectedIds) : [],
         pagingAndSortingModel: new PaginationEntity
     }
@@ -58,7 +67,7 @@ const Discover = ({ navigation }: any) => {
         deletedBy: null,
         isSoftDeleted: null,
         searchString: null,
-        userAccountId: 'cde87cf5-06de-47ac-9574-ac22d89c9432',
+        userAccountId: Ultility.getUserInfo().id,
         categoryTypeIds: categoryTypeSelectedIds ? JSON.parse(categoryTypeSelectedIds) : [],
         type: null,
         categoryId: null,
@@ -66,6 +75,7 @@ const Discover = ({ navigation }: any) => {
         pagingAndSortingModel: new PaginationEntity
     }
     const [blogRequest, setBlogSearch] = useState(blogSearch);
+    const [requestDelete, setRequestDelete] = useState({});
     const blogService = new BlogService();
     const [dataBlog, setDataBlog] = useState<UserBlogEntity[]>([]);
     const [categoryRequest, setCategorySearch] = useState(categorySearch);
@@ -82,7 +92,7 @@ const Discover = ({ navigation }: any) => {
     const [soundInstance, setSoundInstance] = useState<Sound | null>(null);
     const [isFavorite, setIsFavorite] = useState(false);
     const [isAvatarMenuVisible, setAvatarMenuVisible] = useState(false);
-    const [listChecked, setListChecked] = useState<number[]>(typeCheckBoxFilters.filter(x => x.checked).map(x => x.id));
+    const [listChecked, setListChecked] = useState<number[] | null>(typeCheckBoxFilters.filter(x => x.checked).map(x => x.id));
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const handleAvatarClick = () => {
         setAvatarMenuVisible(!isAvatarMenuVisible);
@@ -110,7 +120,12 @@ const Discover = ({ navigation }: any) => {
     }
 
     const deleteBlog = async (item: UserBlogEntity) => {
-        console.log(item.id);
+        setVisibleModal(true);
+        const req = {
+            id: item.id,
+            userAccountId: item.userAccountId
+        };
+        setRequestDelete(req);
     }
 
     const renderContent = () => {
@@ -134,7 +149,7 @@ const Discover = ({ navigation }: any) => {
     const saveFavoriteBlog = async (blog: UserBlogEntity) => {
         let _selected = !blog.selected;
         let req = {
-            userAccountId: 'cde87cf5-06de-47ac-9574-ac22d89c9432',
+            userAccountId: Ultility.getUserInfo().id,
             blogId: blog.id,
             selected: _selected
         }
@@ -145,7 +160,7 @@ const Discover = ({ navigation }: any) => {
                     c.id === blog.id ? { ...c, selected: _selected, totalLike: (_selected ? (c.totalLike ?? 0) + 1 : (c.totalLike ?? 0) - 1) } : c
                 )
             );
-            Alert.alert('Thao tác thành công');
+            setVisibleSuccessModal(true);
         }
         else {
             console.error('Failed:', response?.data.message);
@@ -265,6 +280,7 @@ const Discover = ({ navigation }: any) => {
         setIsLoading(true);
         blogRequest.pagingAndSortingModel.pageIndex = pageIndexBlog;
         blogRequest.pagingAndSortingModel.pageSize = pageSizeBlog;
+        blogRequest.types = listChecked;
         blogRequest.pagingAndSortingModel.orderColumn = 'CreatedAt';
         blogRequest.pagingAndSortingModel.orderDirection = 'desc';
         await blogService.getListAllByType(blogRequest).then(res => {
@@ -297,15 +313,13 @@ const Discover = ({ navigation }: any) => {
                 c.id === type.id ? { ...c, checked: !c.checked } : c
             )
         );
-        console.log(typeCheckBoxFilters.filter(x => x.checked).map(x => x.id));
-        // if (!(typeCheckBoxFilters.filter(x => x.checked).length > 0)) {
-        //     setDataBlog([]);
-        // }
-        // else {
-        //     setListChecked(typeCheckBoxFilters.filter(x => x.checked).map(x => x.id))
-        //     console.log(listChecked);
-        //     getDataBlog()
-        // }
+        if (!(typeCheckBoxFilters.filter(x => x.checked).length > 0)) {
+            setDataBlog([]);
+        }
+        else {
+            setListChecked(typeCheckBoxFilters.filter(x => x.checked).map(x => x.id))
+            getDataBlog()
+        }
     }
 
     const navigateCreateBlog = async () => {
@@ -316,6 +330,8 @@ const Discover = ({ navigation }: any) => {
 
     useEffect(() => {
         if (isFocused) {
+            setListChecked(null);
+            hideModal();
             if (categorySelected) {
                 blogRequest.categoryId = categorySelected.id;
                 setSelectedTab(categorySelected.id ?? 'ALL');
@@ -324,9 +340,9 @@ const Discover = ({ navigation }: any) => {
                 blogRequest.categoryId = null;
                 setSelectedTab('ALL');
             }
+            getDataCategory();
+            getDataBlog();
         }
-        getDataCategory();
-        getDataBlog();
         return () => {
             console.log('Component will unmount. Clean-up if needed.');
         };
@@ -345,7 +361,7 @@ const Discover = ({ navigation }: any) => {
                         <TouchableOpacity onPress={() => handleAvatarClick()}>
                             <Avatar.Image style={{ backgroundColor: '#817a87', marginRight: 10 }} source={ImageAssets.filter} size={30} />
                         </TouchableOpacity>
-                        <Avatar.Image source={ImageAssets.avatar} size={30} />
+                        <Avatar.Image source={{ uri: CONFIG_URL.URL_UPLOAD + Ultility.getUserInfo().image }} size={30} />
                     </View>
                 </View>
                 <View style={styles.buttonContainer}>
@@ -368,25 +384,32 @@ const Discover = ({ navigation }: any) => {
                         ))}
                     </ScrollView>
                 </View>
-
                 {renderContent()}
             </View>
-            {isAvatarMenuVisible && (
-                <View style={styles.menuContainer}>
-                    <View style={styles.menuBg}>
-                        {typeCheckBoxFilters.map((type) => (
-                            <View key={type.id} style={styles.menuContent}>
-                                <Checkbox.Android
-                                    status={type.checked == true ? 'checked' : 'unchecked'}
-                                    onPress={() => filterBlogByType(type)}
-                                    color={type.checked ? '#FE2083' : ''}
-                                />
-                                <Text style={styles.text}>{type.name}</Text>
-                            </View>
-                        ))}
+            {
+                isAvatarMenuVisible && (
+                    <View style={styles.menuContainer}>
+                        <View style={styles.menuBg}>
+                            {typeCheckBoxFilters.map((type) => (
+                                <View key={type.id} style={styles.menuContent}>
+                                    <Checkbox.Android
+                                        status={type.checked == true ? 'checked' : 'unchecked'}
+                                        onPress={() => filterBlogByType(type)}
+                                        color={type.checked ? '#FE2083' : ''}
+                                    />
+                                    <Text style={styles.text}>{type.name}</Text>
+                                </View>
+                            ))}
+                        </View>
                     </View>
-                </View>
-            )}
+                )
+            }
+            <Modal visible={visibleModal} onDismiss={hideModal} contentContainerStyle={styles.modalContent}>
+                <DeleteModal request={requestDelete} url={'US_Blog/delete-blog-by-user-id'} hideModal={hideModal} />
+            </Modal>
+            <Modal visible={visibleSuccessModal} onDismiss={hideModal} contentContainerStyle={styles.modalContent}>
+                <SuccessModal message={'Thao tác thành công'} hideModal={hideModal} />
+            </Modal>
         </SafeAreaView >
     )
 }

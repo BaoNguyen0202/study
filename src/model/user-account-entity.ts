@@ -47,3 +47,27 @@ export class UserAccountChangePassWord {
     oldHashPassword?: string | null;
     newHashpassword?: string | null;
 }
+
+export class UserAccountRegisterResponseEntity extends BaseEntity {
+    userName?: string | null;
+    password?: string | null;
+    code?: string | null;
+    image?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    status?: number | null;
+    role?: RoleEntity | null;
+    customer?: CustomerEntity | null;
+}
+
+export class UserAccountRegisterEntity extends BaseEntity {
+    userName?: string | null;
+    hashPassword?: string | null;
+    image?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    fullName?: string | null;
+    birth?: Date | null;
+    address?: string | null;
+    gender?: number | null;
+}

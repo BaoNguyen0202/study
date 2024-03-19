@@ -10,6 +10,7 @@ import { Icon } from 'react-native-paper';
 import BottomTabDisplay from './bottom-tab-display';
 import { SCREEN_CONSTANT } from '../config/configuration';
 import FavoriteCategoryScreen from '../screens/main/favorite-category/favorite-category';
+import NotifycationScreen from '../screens/main/notifycation/notifycation';
 const Tab = createBottomTabNavigator();
 
 const MainTab = () => {
@@ -34,6 +35,11 @@ const MainTab = () => {
                 component={Personal}
                 options={{
                     tabBarLabel: 'Cá nhân',
+                }} />
+            <Tab.Screen name={SCREEN_CONSTANT.NOTIFYCATION}
+                component={NotifycationScreen}
+                options={{
+                    tabBarLabel: 'Thông báo',
                 }} />
         </Tab.Navigator>
     );

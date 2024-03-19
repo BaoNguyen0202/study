@@ -7,7 +7,7 @@ import { Icon } from 'react-native-paper';
 const BottomTabDisplay = ({ state, descriptors, navigation }: any) => {
     const theme = useTheme();
 
-    const icons = ['home-outline', 'newspaper-variant', 'bookmark-minus-outline', 'account-outline'];
+    const icons = ['home-outline', 'newspaper-variant', 'bookmark-minus-outline', 'account-outline', 'bell-outline'];
 
     return (
         <View style={styles.container}>

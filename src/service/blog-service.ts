@@ -46,4 +46,29 @@ export class BlogService {
             console.error('Error:', error);
         }
     };
+
+    changeTrack = async (request: UserBlogEntity, type: string): Promise<AxiosResponse<ResponseAPI<UserBlogEntity>> | undefined | null> => {
+        try {
+            return await axios.post<ResponseAPI<UserBlogEntity>>(CONFIG_URL.API + `US_Blog/get-${type}-blog`, request);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    createBlog = async (request: UserBlogEntity): Promise<AxiosResponse<ResponseAPI<UserBlogEntity>> | undefined | null> => {
+        try {
+            return await axios.post<ResponseAPI<UserBlogEntity>>(CONFIG_URL.API + 'US_Blog/add-blog-by-user', request);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+
+    deleteByUser = async (request: UserBlogEntity): Promise<AxiosResponse<ResponseAPI<UserBlogEntity>> | undefined | null> => {
+        try {
+            return await axios.post<ResponseAPI<UserBlogEntity>>(CONFIG_URL.API + 'US_Blog/delete-blog-by-user-id', request);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
 }

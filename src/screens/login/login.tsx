@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Alert, Platform, Image } from 'react-native';
-import { TextInput, Button, Text, Provider as PaperProvider, Icon, ActivityIndicator } from 'react-native-paper';
+import { TextInput, Button, Text, Provider as PaperProvider, Icon, ActivityIndicator, Modal } from 'react-native-paper';
 import { Common } from '../../utils';
 import { useMMKVString } from 'react-native-mmkv';
 import { BaseService } from '../../service/base-service';
@@ -14,8 +14,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux-store/store';
 import { useTheme } from '@react-navigation/native'
 import { ImageAssets } from '../../assets';
+import SuccessModal from '../modal/success-modal/success-modal';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const LoginScreen = ({ navigation }: any) => {
+    const [visibleModal, setVisibleModal] = useState(false);
+    const [messageSuccess, setMessageSuccess] = useState<string>('');
+    const hideModal = async () => {
+        setVisibleModal(false);
+    };
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
@@ -41,17 +48,18 @@ const LoginScreen = ({ navigation }: any) => {
                 setUserNameStore(result?.userName ?? '');
                 setToken(result?.token ?? '')
                 setIsLoading(false);
+                setMessageSuccess('Đăng nhập thành công');
+                setVisibleModal(true);
                 await Common.dismissKeyboard(() => {
                     navigation.navigate(SCREEN_CONSTANT.CATEGORY_TYPE);
                 });
             } else {
-                console.error('Login failed:', response?.data.message);
-                Alert.alert('Login Failed', 'response?.data.message');
+                setMessageSuccess(response?.data.message ?? '');
                 setIsLoading(false);
             }
         } catch (error) {
-            console.error('Error during login:', error);
-            Alert.alert('Error', 'An error occurred during login. Please try again later.');
+            setVisibleModal(true);
+            setMessageSuccess('Lỗi server');
             setIsLoading(false);
         }
     };
@@ -68,8 +76,9 @@ const LoginScreen = ({ navigation }: any) => {
                     <Text style={styles.text}>Chào mừng đã trở lại!</Text>
                     <Text style={styles.text}>Hãy đăng nhập để sử dụng ứng dụng</Text>
                 </View>
-                <TextInput mode='outlined' label="Tên đăng nhập" value={userName} onChangeText={setUserName} style={styles.input} />
+                <TextInput theme={{ roundness: 23 }} mode='outlined' label="Tên đăng nhập" value={userName} onChangeText={setUserName} style={styles.input} />
                 <TextInput
+                    theme={{ roundness: 23 }}
                     mode='outlined'
                     label="Mật khẩu"
                     value={password}
@@ -98,7 +107,20 @@ const LoginScreen = ({ navigation }: any) => {
                     <Image source={ImageAssets.ios_ic} />
                 </View>
             </View>
-            <Text style={styles.textNoAcount}>Bạn chưa có tài khoản? <Text style={{ color: '#FE2083' }}>Đăng ký ngay</Text></Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                <Text style={styles.textNoAcount}>Bạn chưa có tài khoản ?
+                </Text>
+                <TouchableOpacity onPress={() => {
+                    Common.dismissKeyboard(() => {
+                        navigation.navigate(SCREEN_CONSTANT.REGISTER_ACCOUNT);
+                    });
+                }}>
+                    <Text style={{ color: '#FE2083' }}>  Đăng ký ngay</Text>
+                </TouchableOpacity>
+            </View>
+            <Modal visible={visibleModal} onDismiss={hideModal} contentContainerStyle={styles.modalContent}>
+                <SuccessModal message={messageSuccess} hideModal={hideModal} />
+            </Modal>
             {isLoading ? <ActivityIndicator animating={true} color='#FE2083' /> : <></>}
         </View>
     );
@@ -119,7 +141,6 @@ const styles = StyleSheet.create({
     input: {
         marginBottom: 16,
         backgroundColor: '#FFF',
-
     },
     button: {
         backgroundColor: '#FE2083',
@@ -177,7 +198,13 @@ const styles = StyleSheet.create({
         marginVertical: 16,
         flexDirection: 'row',
         alignItems: 'center'
-    }
+    },
+    modalContent: {
+        backgroundColor: '#1A1429',
+        marginHorizontal: 24,
+        padding: 24,
+        borderRadius: 16,
+    },
 });
 
 export default LoginScreen;

@@ -1,7 +1,5 @@
 import { View, Text, Image, TouchableOpacity, Pressable, SafeAreaView, FlatList, StyleSheet, ImageBackground, ActivityIndicator, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import LinearGradient from 'react-native-linear-gradient';
-import { musiclibrary } from '../../../../data';
 import { Appbar, Icon, Searchbar } from 'react-native-paper';
 import { ImageAssets } from '../../../assets';
 import { favoriteCategoryStyles } from '../favorite-category/favorite-category.style';
@@ -9,14 +7,15 @@ import { HEIGHT, WIDTH } from '../../../common/constant';
 import { CONFIG_URL, SCREEN_CONSTANT, STATUS_REPONSE_API } from '../../../config/configuration';
 import { Common } from '../../../utils';
 import { UserBlogEntity, UserBlogEntitySearch } from '../../../model/blog-entity';
-import { trackListStyles } from './track-list.styes';
 import { useRoute } from '@react-navigation/native';
 import { UserCategoryEntity } from '../../../model/category-entity';
 import { PaginationEntity } from '../../../model/pagination-entity';
 import { Ultility } from '../../../common/ultility';
 import { BlogService } from '../../../service/blog-service';
+import { trackListStyles } from '../track-list/track-list.styes';
+import { recordPlayerStyles } from './record-player.styles';
 
-const TrackListScreen = ({ navigation }: any) => {
+const RecordOtherScreen = ({ navigation, track, onEvent, onEventSound, onEventAudioUrl }: any) => {
     const categoryTypeSelectedIds = Common.storage.getString('category_type_selected_ids');
     const route = useRoute();
     const [category, setCategory] = useState<UserCategoryEntity | null | undefined>(route.params);
@@ -73,16 +72,13 @@ const TrackListScreen = ({ navigation }: any) => {
         // setIsLoading(true);
     }
     const navigateToRecordPlayer = async (track: UserBlogEntity) => {
-        await Common.dismissKeyboard(() => {
-            navigation.navigate(SCREEN_CONSTANT.RECORD_PLAYER, track);
-        });
+        onEvent(track);
+        await onEventSound(CONFIG_URL.URL_RECORD + track?.path ?? '');
+        // await Common.dismissKeyboard(() => {
+        //     navigation.navigate(SCREEN_CONSTANT.RECORD_PLAYER, track);
+        // });
     };
 
-    const navigationToBlogDetail = async (track: UserBlogEntity) => {
-        await Common.dismissKeyboard(() => {
-            navigation.navigate(SCREEN_CONSTANT.BLOG, track);
-        });
-    }
     const PlaylistImageView = () => (
         <>
             <View style={{
@@ -99,32 +95,13 @@ const TrackListScreen = ({ navigation }: any) => {
                 <View style={[favoriteCategoryStyles.section, { height: HEIGHT / 20 }]}>
                     <Appbar.Header style={favoriteCategoryStyles.header}>
                         <View style={favoriteCategoryStyles.titleContainer}>
-                            <TouchableOpacity style={favoriteCategoryStyles.iconheader} onPress={() => navigation.goBack()}>
-                                <Icon source={'chevron-left'} color="#FFF" size={24} />
-                            </TouchableOpacity>
-                            <Text style={[favoriteCategoryStyles.appbarText, { textAlign: 'center', width: WIDTH / 2 }]}>{category?.name}</Text>
+                            <View></View>
+                            <Text style={[favoriteCategoryStyles.appbarText, { textAlign: 'center', width: WIDTH / 2 }]}>Danh sách phát</Text>
                             <Appbar.Action icon="magnify" onPress={_handleSearch} color={'#FFFFFF'} />
                         </View>
                     </Appbar.Header>
                 </View>
             </View>
-            <LinearGradient
-                colors={['#FE2083', 'rgb(223 168 182)', '#191414']}
-                style={trackListStyles.linearGradient}>
-                <Image
-                    style={{ width: WIDTH - 150, height: 200 }}
-                    source={{ uri: CONFIG_URL.URL_UPLOAD + category?.image ?? '' }}
-                />
-            </LinearGradient>
-            {data.length > 0 &&
-                <TouchableOpacity style={trackListStyles.shuffleButtonContainer} onPress={() => navigateToRecordPlayer(data[0])}>
-                    <Text style={[trackListStyles.shuffleButton]}>Phát tất cả
-                    </Text>
-                    <View style={{ alignItems: 'center', justifyContent: 'center', marginLeft: 10 }}>
-                        <Icon color='#fff' source={'play'} size={25} />
-                    </View>
-                </TouchableOpacity>
-            }
         </>
     );
 
@@ -133,7 +110,7 @@ const TrackListScreen = ({ navigation }: any) => {
             <>
                 {index === 0 && <PlaylistImageView />}
                 <TouchableOpacity onPress={() => navigateToRecordPlayer(item)}>
-                    <View style={[trackListStyles.row, { backgroundColor: '#FFFFFF0D', height: 54, borderRadius: 12, marginTop: 10 }]}>
+                    <View style={item.id == track.id ? recordPlayerStyles.trackPlaying : recordPlayerStyles.trackPause}>
                         <View style={[trackListStyles.leftPlay]}>
                             <ImageBackground
                                 source={{ uri: CONFIG_URL.URL_UPLOAD + item.poster ?? '' }}
@@ -144,19 +121,19 @@ const TrackListScreen = ({ navigation }: any) => {
                                 </View>
                             </ImageBackground>
                             <View style={{ position: 'absolute' }}>
-                                <Icon color='#fff' source={'play'} size={25} />
+                                <Icon color='#fff' source={item.id == track.id ? 'pause' : 'play'} size={25} />
                             </View>
                         </View>
                         <View style={{ marginLeft: 8, marginVertical: 8 }}>
-                            <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between' }} onPress={() => navigationToBlogDetail(item)}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                 <Text style={[trackListStyles.text, { fontSize: 14, fontWeight: '500', width: WIDTH - 100 }]}><Image source={ImageAssets.Chart} style={{ position: 'absolute', width: 14, height: 14 }} /> {item.name}</Text>
                                 <Text style={[trackListStyles.text, { fontSize: 14, fontWeight: '500', position: 'absolute', right: 0, top: 8, flexDirection: 'row' }]}>
-                                    <Icon color='#C2C2C2' source={'cards-heart'} size={14} /> {item.totalLike}   <Icon color='#C2C2C2' source={'dots-horizontal-circle'} size={14} /> {item.totalComment}
+                                    <Icon color={track.selected ? '#FE2083' : '#FFF'} source={'cards-heart'} size={14} /> {track.totalLike}    <Icon color='#FFF' source={'dots-horizontal-circle'} size={14} /> {track.totalComment}
                                 </Text>
-                            </TouchableOpacity>
+                            </View>
                             <View style={[trackListStyles.row, { marginTop: 4 }]}>
-                                <Icon color='#C2C2C2' source={'volume-high'} size={14} />
-                                <Text style={[{ fontSize: 10, color: '#C2C2C2', justifyContent: 'center', marginLeft: 4 }, trackListStyles.feedback]}>00:00:00</Text>
+                                <Icon color='#FFF' source={'volume-high'} size={14} />
+                                <Text style={[{ fontSize: 10, color: '#FFF', justifyContent: 'center', marginLeft: 4 }, trackListStyles.feedback]}>00:00:00</Text>
                             </View>
                         </View>
                     </View>
@@ -186,4 +163,4 @@ const TrackListScreen = ({ navigation }: any) => {
     )
 }
 
-export default TrackListScreen
+export default RecordOtherScreen

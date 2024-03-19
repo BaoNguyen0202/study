@@ -5,12 +5,17 @@ import { Common } from "../../../utils";
 import { PaginationEntity } from "../../../model/pagination-entity";
 import { CONFIG_URL, SCREEN_CONSTANT, STATUS_REPONSE_API } from "../../../config/configuration";
 import { Alert, FlatList, ImageBackground, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { ActivityIndicator, Appbar, Avatar, Icon, MD2Colors, Searchbar, Surface } from "react-native-paper";
+import { ActivityIndicator, Appbar, Avatar, Icon, MD2Colors, Modal, Searchbar, Surface } from "react-native-paper";
 import { HEIGHT } from "../../../common/constant";
 import { favoriteCategoryStyles } from "../favorite-category/favorite-category.style";
 import { useNavigation } from "@react-navigation/native";
+import SuccessModal from "../../modal/success-modal/success-modal";
 
 const PodcastCategoryScreen = ({ navigation }: any) => {
+    const [visibleSuccessModal, setVisibleSuccessModal] = useState(false);
+    const hideModal = async () => {
+        setVisibleSuccessModal(false);
+    };
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isSearch, setIsSearch] = useState<boolean>(false);
@@ -151,6 +156,9 @@ const PodcastCategoryScreen = ({ navigation }: any) => {
                 onEndReachedThreshold={0.1}
             />
             {isLoading ? <ActivityIndicator animating={true} color='#FE2083' /> : <></>}
+            <Modal visible={visibleSuccessModal} onDismiss={hideModal} contentContainerStyle={favoriteCategoryStyles.modalContent}>
+                <SuccessModal message={'Thao tác thành công'} hideModal={hideModal} />
+            </Modal>
         </View>
     );
 }

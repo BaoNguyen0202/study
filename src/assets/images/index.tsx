@@ -12,5 +12,6 @@ const Ellipse11 = require('./Ellipse11.png')
 const Polygon1 = require('./Polygon1.png')
 const Chart = require('./Chart.png')
 const plus = require('./Plus.png')
+const Search = require('./Search.png')
 
-export { InitLogo, Bg_Image, Bg_Image2, Bg_Image3, ios_ic, google_ic, facebook_ic, avatar, filter, Ellipse10, Ellipse11, Polygon1, plus, Chart };
+export { InitLogo, Bg_Image, Bg_Image2, Bg_Image3, ios_ic, google_ic, facebook_ic, avatar, filter, Ellipse10, Ellipse11, Polygon1, plus, Chart, Search };

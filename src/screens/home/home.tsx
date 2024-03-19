@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView, Image, ImageBackground, Alert, TouchableOpacity } from 'react-native';
-import { ActivityIndicator, Appbar, Avatar, Button, Card, Icon, IconButton, Paragraph, Searchbar, Surface, Text, Title, TouchableRipple } from 'react-native-paper';
+import { ActivityIndicator, Appbar, Avatar, Button, Card, Icon, IconButton, Modal, Paragraph, Searchbar, Surface, Text, Title, TouchableRipple } from 'react-native-paper';
 import { CONFIG_URL, SCREEN_CONSTANT, STATUS_REPONSE_API } from '../../config/configuration';
 import { HEIGHT, WIDTH } from '../../common/constant';
 import { homeStyles } from './home.style';
@@ -13,8 +13,13 @@ import { BlogService } from '../../service/blog-service';
 import { Ultility } from '../../common/ultility';
 import { styles } from '../discover/discover.style';
 import { useIsFocused, useRoute } from '@react-navigation/native';
+import SuccessModal from '../modal/success-modal/success-modal';
 
 const HomeScreen = ({ navigation }: any) => {
+    const [visibleSuccessModal, setVisibleSuccessModal] = useState(false);
+    const hideModal = async () => {
+        setVisibleSuccessModal(false);
+    };
     const isFocused = useIsFocused();
     const categoryTypeSelectedIds = Common.storage.getString('category_type_selected_ids');
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -175,7 +180,7 @@ const HomeScreen = ({ navigation }: any) => {
                     c.id === category.id ? { ...c, selected: !c.selected } : c
                 )
             );
-            Alert.alert('Thao tác thành công');
+            setVisibleSuccessModal(true);
         }
         else {
             console.error('Failed:', response?.data.message);
@@ -197,7 +202,7 @@ const HomeScreen = ({ navigation }: any) => {
                     c.id === podcast.id ? { ...c, selected: _selected, totalLike: (_selected ? (c.totalLike ?? 0) + 1 : (c.totalLike ?? 0) - 1) } : c
                 )
             );
-            Alert.alert('Thao tác thành công');
+            setVisibleSuccessModal(true);
         }
         else {
             console.error('Failed:', response?.data.message);
@@ -219,7 +224,7 @@ const HomeScreen = ({ navigation }: any) => {
                     c.id === blogText.id ? { ...c, selected: _selected, totalLike: (_selected ? (c.totalLike ?? 0) + 1 : (c.totalLike ?? 0) - 1) } : c
                 )
             );
-            Alert.alert('Thao tác thành công');
+            setVisibleSuccessModal(true);
         }
         else {
             console.error('Failed:', response?.data.message);
@@ -228,7 +233,10 @@ const HomeScreen = ({ navigation }: any) => {
     }
 
     const handleSearch = async () => {
-        console.log(searchQuery);
+        categoryRequest.searchString, podcastRequest.searchString, blogTextRequest.searchString = searchQuery;
+        await getDataCategory();
+        await getDataPodcast();
+        await getDataBlogText();
     }
 
     const loadMoreCategory = async () => {
@@ -267,7 +275,7 @@ const HomeScreen = ({ navigation }: any) => {
         }}>
             {isSearch ?
                 <Searchbar
-                    placeholder="Tìm kiếm theo tên, chủ đề"
+                    placeholder="Tìm kiếm theo tên, hashtag chủ đề"
                     onChangeText={setSearchQuery}
                     value={searchQuery}
                     onSubmitEditing={handleSearch}
@@ -279,11 +287,9 @@ const HomeScreen = ({ navigation }: any) => {
                         <Text style={homeStyles.appbarText}>Trang chủ</Text>
                     </View>
                     <Appbar.Action icon="magnify" onPress={_handleSearch} color={'#FFFFFF'} />
-                    {/* <Avatar.Image source={{ uri: CONFIG_URL.URL_UPLOAD }} size={30} /> */}
-                    <Avatar.Image source={require(`../../assets/images/avatar.png`)} size={30} />
+                    <Avatar.Image source={{ uri: CONFIG_URL.URL_UPLOAD + Ultility.getUserInfo().image }} size={30} />
                 </Appbar.Header>
             </View>
-
             <View style={[homeStyles.section, { height: HEIGHT / 5.7 }]}>
                 <Card>
                     <Card.Cover source={require(`../../assets/images/Frame7.png`)} style={homeStyles.backgroundImage} />
@@ -295,7 +301,7 @@ const HomeScreen = ({ navigation }: any) => {
                     <Text style={homeStyles.appbarText}>Danh sách chủ đề</Text>
                     <TouchableOpacity onPress={() => _handleMore('CATEGORY')} style={{ flexDirection: 'row' }}>
                         <Text style={homeStyles.seeAllText}>Xem tất cả</Text>
-                        <Icon color='red' source={'chevron-right'} size={24}></Icon>
+                        <Icon color='#FE2083' source={'chevron-right'} size={24}></Icon>
                     </TouchableOpacity>
                 </View>
                 <View style={{ flex: 1, height: HEIGHT / 5 }}>
@@ -335,7 +341,7 @@ const HomeScreen = ({ navigation }: any) => {
                     <Text style={homeStyles.appbarText}>Podcast nổi bật</Text>
                     <TouchableOpacity onPress={() => _handleMore('PODCAST')} style={{ flexDirection: 'row' }}>
                         <Text style={homeStyles.seeAllText}>Xem tất cả</Text>
-                        <Icon color='red' source={'chevron-right'} size={24}></Icon>
+                        <Icon color='#FE2083' source={'chevron-right'} size={24}></Icon>
                     </TouchableOpacity>
                 </View>
                 <View style={{ flex: 1, height: HEIGHT / 4 }}>
@@ -351,7 +357,7 @@ const HomeScreen = ({ navigation }: any) => {
                                     <Text style={homeStyles.namePodcast}>{podcast.name}</Text>
                                     <View style={{ flexDirection: 'row' }}>
                                         <Icon color='#C2C2C2' source={'volume-high'} size={14}></Icon>
-                                        <Text style={{ color: '#C2C2C2' }}> 00:05:00</Text>
+                                        <Text style={{ color: '#C2C2C2' }}> {Ultility.getSoundDurationByPath(podcast.path ?? '')}</Text>
                                     </View>
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                         <View style={{ flexDirection: 'row' }}>
@@ -374,10 +380,10 @@ const HomeScreen = ({ navigation }: any) => {
                     <Text style={homeStyles.appbarText}>Bài đăng nổi bật</Text>
                     <TouchableOpacity onPress={() => _handleMore('BLOG')} style={{ flexDirection: 'row' }}>
                         <Text style={homeStyles.seeAllText}>Xem tất cả</Text>
-                        <Icon color='red' source={'chevron-right'} size={24}></Icon>
+                        <Icon color='#FE2083' source={'chevron-right'} size={24}></Icon>
                     </TouchableOpacity>
                 </View>
-                <View style={{ flex: 1, height: HEIGHT / 4.5 }}>
+                <View style={{ flex: 1 }}>
                     {dataBlogText.map((blogText) => (
                         <TouchableOpacity key={blogText.id} style={discoverStyles.containerItem} onPress={() => navigateBlogDetail(blogText)}>
                             <View style={[discoverStyles.row, discoverStyles.spcabetwen]}>
@@ -426,6 +432,9 @@ const HomeScreen = ({ navigation }: any) => {
                     ))}
                 </View>
             </View>
+            <Modal visible={visibleSuccessModal} onDismiss={hideModal} contentContainerStyle={styles.modalContent}>
+                <SuccessModal message={'Thao tác thành công'} hideModal={hideModal} />
+            </Modal>
         </ScrollView >
     );
 };

@@ -43,4 +43,8 @@ export class SCREEN_CONSTANT {
     static TRACK_LIST = 'track-list';
     static PODCACST_CATEGORY = 'podcast-category';
     static CREATE_BLOG = 'create-blog';
+    static NOTIFYCATION = 'notifycation';
+    static RECORD_OTHER = 'record-other';
+    static REGISTER_ACCOUNT = 'register-account';
+    static REGISTER_CUSTOMER = 'reguster-customer';
 }

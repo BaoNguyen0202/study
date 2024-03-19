@@ -11,6 +11,7 @@ import { Common } from "../../../utils";
 import { useTheme } from '@react-navigation/native'
 import { WIDTH } from "../../../common/constant";
 import Toast from "react-native-toast-message";
+import { Ultility } from "../../../common/ultility";
 
 interface ChipSelected {
     id?: number | null;
@@ -36,7 +37,7 @@ const CategoryTypeScreen = ({ navigation }: any) => {
         deletedBy: null,
         isSoftDeleted: null,
         searchString: null,
-        userAccountId: 'cde87cf5-06de-47ac-9574-ac22d89c9432',
+        userAccountId: Ultility.getUserInfo().id,
         pagingAndSortingModel: new PaginationEntity
     }
     const [categoryTypeSearch, setCategoryTypeSearch] = useState(dataSearch);
@@ -65,7 +66,7 @@ const CategoryTypeScreen = ({ navigation }: any) => {
     const handleConfirm = async () => {
         try {
             let request: UserAccountCategoryType = {
-                userAccountId: 'cde87cf5-06de-47ac-9574-ac22d89c9432',
+                userAccountId: Ultility.getUserInfo().id,
                 categoryTypeIds: data.filter(x => x.selected == true).map(x => x.id)
             };
             const response = await categoryTypeService.addUserCategoryType(request);

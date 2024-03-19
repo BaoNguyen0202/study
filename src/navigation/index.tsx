@@ -19,6 +19,10 @@ import PodcastCategoryScreen from '../screens/main/category/podcast-category';
 import CreateBlogScreen from '../screens/main/create-blog/create-blog';
 import { Portal } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
+import NotifycationScreen from '../screens/main/notifycation/notifycation';
+import RecordOtherScreen from '../screens/main/record-player/record-other';
+import RegisterAccountScreen from '../screens/register/register-account';
+import RegisterCustomerScreen from '../screens/register/register-customer';
 
 const Stack = createStackNavigator();
 
@@ -85,6 +89,26 @@ const AppNavigationContainer = () => {
                     <Stack.Screen
                         name={SCREEN_CONSTANT.CREATE_BLOG}
                         component={CreateBlogScreen}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name={SCREEN_CONSTANT.NOTIFYCATION}
+                        component={NotifycationScreen}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name={SCREEN_CONSTANT.RECORD_OTHER}
+                        component={RecordOtherScreen}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name={SCREEN_CONSTANT.REGISTER_ACCOUNT}
+                        component={RegisterAccountScreen}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name={SCREEN_CONSTANT.REGISTER_CUSTOMER}
+                        component={RegisterCustomerScreen}
                         options={{ headerShown: false }}
                     />
                 </Stack.Navigator>

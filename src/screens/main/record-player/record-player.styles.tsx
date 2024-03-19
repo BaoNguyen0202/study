@@ -134,5 +134,19 @@ export const recordPlayerStyles =
             borderRadius: 50,
             marginLeft: '5%',
             marginRight: '5%'
+        },
+        trackPause: {
+            flexDirection: 'row',
+            backgroundColor: '#FFFFFF0D',
+            height: 54,
+            borderRadius: 12,
+            marginTop: 10
+        },
+        trackPlaying: {
+            flexDirection: 'row',
+            backgroundColor: 'rgb(223 168 182)',
+            height: 54,
+            borderRadius: 12,
+            marginTop: 10
         }
     });

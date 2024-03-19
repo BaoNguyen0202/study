@@ -98,4 +98,10 @@ export const favoriteCategoryStyles =
             justifyContent: 'center',
             alignItems: 'center',
         },
+        modalContent: {
+            backgroundColor: '#1A1429',
+            marginHorizontal: 24,
+            padding: 24,
+            borderRadius: 16,
+        },
     });

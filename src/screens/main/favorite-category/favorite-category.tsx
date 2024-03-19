@@ -5,13 +5,19 @@ import { Common } from "../../../utils";
 import { PaginationEntity } from "../../../model/pagination-entity";
 import { CONFIG_URL, SCREEN_CONSTANT, STATUS_REPONSE_API } from "../../../config/configuration";
 import { Alert, FlatList, ImageBackground, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { ActivityIndicator, Appbar, Avatar, Icon, MD2Colors, Searchbar, Surface } from "react-native-paper";
+import { ActivityIndicator, Appbar, Avatar, Icon, MD2Colors, Modal, Searchbar, Surface } from "react-native-paper";
 import { favoriteCategoryStyles } from "./favorite-category.style";
 import { HEIGHT } from "../../../common/constant";
 import { styles } from "../../discover/discover.style";
 import { useIsFocused } from "@react-navigation/native";
+import { Ultility } from "../../../common/ultility";
+import SuccessModal from "../../modal/success-modal/success-modal";
 
 const FavoriteCategoryScreen = ({ navigation }: any) => {
+    const [visibleSuccessModal, setVisibleSuccessModal] = useState(false);
+    const hideModal = async () => {
+        setVisibleSuccessModal(false);
+    };
     const isFocused = useIsFocused();
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -41,7 +47,7 @@ const FavoriteCategoryScreen = ({ navigation }: any) => {
         deletedBy: null,
         isSoftDeleted: null,
         searchString: null,
-        userAccountId: 'cde87cf5-06de-47ac-9574-ac22d89c9432',
+        userAccountId: Ultility.getUserInfo().id,
         categoryTypeIds: categoryTypeSelectedIds ? JSON.parse(categoryTypeSelectedIds) : [],
         pagingAndSortingModel: new PaginationEntity
     }
@@ -65,7 +71,8 @@ const FavoriteCategoryScreen = ({ navigation }: any) => {
     }
 
     const handleSearch = async () => {
-        console.log(searchQuery);
+        request.searchString = searchQuery;
+        await getData();
     }
 
     const loadMoreCategory = async () => {
@@ -75,14 +82,14 @@ const FavoriteCategoryScreen = ({ navigation }: any) => {
 
     const saveFavoriteCategory = async (category: UserCategoryEntity) => {
         let req = {
-            userAccountId: 'cde87cf5-06de-47ac-9574-ac22d89c9432',
+            userAccountId: Ultility.getUserInfo().id,
             categoryId: category.id,
             selected: !category.selected
         }
         let response = await categoryService.saveFavoriteCategory(req);
         if (response?.data.code === STATUS_REPONSE_API.OK) {
             setData(data.filter(x => x.id !== category.id));
-            Alert.alert('Thao tác thành công');
+            setVisibleSuccessModal(true);
         }
         else {
             console.error('Failed:', response?.data.message);
@@ -145,7 +152,7 @@ const FavoriteCategoryScreen = ({ navigation }: any) => {
         }}>
             {isSearch ?
                 <Searchbar
-                    placeholder="Tìm kiếm theo tên, chủ đề"
+                    placeholder="Tìm kiếm theo tên chủ đề, hashtag"
                     onChangeText={setSearchQuery}
                     value={searchQuery}
                     onSubmitEditing={handleSearch}
@@ -157,8 +164,7 @@ const FavoriteCategoryScreen = ({ navigation }: any) => {
                         <Text style={favoriteCategoryStyles.appbarText}>Đã lưu</Text>
                     </View>
                     <Appbar.Action icon="magnify" onPress={_handleSearch} color={'#FFFFFF'} />
-                    {/* <Avatar.Image source={{ uri: CONFIG_URL.URL_UPLOAD }} size={30} /> */}
-                    <Avatar.Image source={require(`../../../assets/images/avatar.png`)} size={30} />
+                    <Avatar.Image source={{ uri: CONFIG_URL.URL_UPLOAD + Ultility.getUserInfo().image }} size={30} />
                 </Appbar.Header>
             </View>
             <View style={[favoriteCategoryStyles.section, { height: HEIGHT / 16 }]}>
@@ -181,6 +187,9 @@ const FavoriteCategoryScreen = ({ navigation }: any) => {
                 onEndReachedThreshold={0.1}
             />
             {isLoading ? <ActivityIndicator animating={true} color='#FE2083' /> : <></>}
+            <Modal visible={visibleSuccessModal} onDismiss={hideModal} contentContainerStyle={styles.modalContent}>
+                <SuccessModal message={'Thao tác thành công'} hideModal={hideModal} />
+            </Modal>
         </View>
     );
 }

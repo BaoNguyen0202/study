@@ -32,12 +32,11 @@ const HelloScreen = ({ navigation }: any) => {
                 <Button onPress={() => { navigation.navigate(SCREEN_CONSTANT.LOG_IN) }} mode='contained' style={styles.btn}>
                     Bắt đầu
                 </Button>
-                <Button textColor="#FE2083" mode='outlined' style={styles.btn2}>
+                <Button textColor="#FE2083" mode='outlined' style={styles.btn2} onPress={() => { navigation.navigate(SCREEN_CONSTANT.REGISTER_ACCOUNT) }}>
                     Đăng ký
                 </Button>
             </View>
         </View>
-
     )
 }
 const styles = StyleSheet.create({

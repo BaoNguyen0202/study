@@ -2,7 +2,7 @@ import { useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { UserBlogEntity } from "../../../model/blog-entity";
 import { Alert, Image, ImageBackground, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
-import { Appbar, Avatar, Icon, TextInput } from "react-native-paper";
+import { Appbar, Avatar, Icon, Modal, TextInput } from "react-native-paper";
 import { styles } from "../../discover/discover.style";
 import { Ultility } from "../../../common/ultility";
 import { CONFIG_URL, SCREEN_CONSTANT, STATUS_REPONSE_API } from "../../../config/configuration";
@@ -15,8 +15,18 @@ import { RatingBlogEntity, RatingBlogEntitySearch } from "../../../model/rating-
 import { PaginationEntity } from "../../../model/pagination-entity";
 import { BlogService } from "../../../service/blog-service";
 import { homeStyles } from "../../home/home.style";
+import DeleteModal from "../../modal/delete-modal/delete-modal";
+import SuccessModal from "../../modal/success-modal/success-modal";
 
 const BlogScreen = ({ navigation }: any) => {
+    const [visibleSuccessModal, setVisibleSuccessModal] = useState(false);
+    const [visibleModal, setVisibleModal] = useState(false);
+    const [visibleRatingModal, setVisibleRatingModal] = useState(false);
+    const hideModal = async () => {
+        setVisibleModal(false);
+        setVisibleRatingModal(false);
+        setVisibleSuccessModal(false);
+    };
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const route = useRoute();
     const [data, setData] = useState<UserBlogEntity | null | undefined>(route.params);
@@ -24,7 +34,8 @@ const BlogScreen = ({ navigation }: any) => {
     const [pageSize, setPageSize] = useState<number>(5);
     const [pageIndex, setPageIndex] = useState<number>(1);
     const [commentText, setCommentText] = useState('');
-
+    const [requestDelete, setRequestDelete] = useState({});
+    const [requestDeleteRating, setRequestDeleteRating] = useState({});
     const blogService = new BlogService();
     const ratingInsert: RatingBlogEntity = {
         id: null,
@@ -47,9 +58,24 @@ const BlogScreen = ({ navigation }: any) => {
         pagingAndSortingModel: new PaginationEntity,
     }
 
-    const deleteBlog = async () => {
-        console.log(data?.id);
+    const deleteBlog = async (item: UserBlogEntity | null | undefined) => {
+        setVisibleModal(true);
+        const req = {
+            id: item?.id,
+            userAccountId: item?.userAccountId
+        };
+        setRequestDelete(req);
     }
+
+    const deleteRatingBlog = async (item: UserBlogEntity | null | undefined) => {
+        setVisibleRatingModal(true);
+        const req = {
+            id: item?.id,
+            userAccountId: item?.userAccountId
+        };
+        setRequestDeleteRating(req);
+    }
+
     const saveFavoriteBlog = async () => {
         let _selected = !data?.selected;
         let req = {
@@ -60,7 +86,7 @@ const BlogScreen = ({ navigation }: any) => {
         let response = await blogService.saveFavoriteBlog(req);
         if (response?.data.code === STATUS_REPONSE_API.OK) {
             setData({ ...data, selected: _selected, totalLike: (_selected ? (data?.totalLike ?? 0) + 1 : (data?.totalLike ?? 0) - 1) });
-            Alert.alert('Thao tác thành công');
+            setVisibleSuccessModal(true);
         }
         else {
             console.error('Failed:', response?.data.message);
@@ -163,7 +189,7 @@ const BlogScreen = ({ navigation }: any) => {
                                                 <View style={[styles.row, styles.spcabetwen, { marginBottom: 5 }]}>
                                                     <View style={styles.row}>
                                                     </View>
-                                                    <TouchableOpacity onPress={() => deleteBlog()}>
+                                                    <TouchableOpacity onPress={() => deleteRatingBlog(data)}>
                                                         <View style={styles.row}>
                                                             <Icon color='#FFF' source={'close'} size={17} />
                                                         </View>
@@ -232,7 +258,7 @@ const BlogScreen = ({ navigation }: any) => {
                     <View style={[styles.row, styles.spcabetwen, { marginBottom: 5 }]}>
                         <View style={styles.row}>
                         </View>
-                        <TouchableOpacity onPress={() => deleteBlog()}>
+                        <TouchableOpacity onPress={() => deleteBlog(data)}>
                             <View style={styles.row}>
                                 <Icon color='#FFF' source={'dots-horizontal'} size={17} />
                                 <Icon color='#FFF' source={'close'} size={17} />
@@ -315,6 +341,15 @@ const BlogScreen = ({ navigation }: any) => {
                 {renderRating()}
             </View>
             {renderInputComent()}
+            <Modal visible={visibleModal} onDismiss={hideModal} contentContainerStyle={styles.modalContent}>
+                <DeleteModal request={requestDelete} url={'US_Blog/delete-blog-by-user-id'} hideModal={hideModal} />
+            </Modal>
+            <Modal visible={visibleRatingModal} onDismiss={hideModal} contentContainerStyle={styles.modalContent}>
+                <DeleteModal request={requestDeleteRating} url={'US_Blog/delete-rating-by-user-id'} hideModal={hideModal} />
+            </Modal>
+            <Modal visible={visibleSuccessModal} onDismiss={hideModal} contentContainerStyle={styles.modalContent}>
+                <SuccessModal message={'Thao tác thành công'} hideModal={hideModal} />
+            </Modal>
         </SafeAreaView>
     );
 }

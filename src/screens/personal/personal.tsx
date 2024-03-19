@@ -10,6 +10,8 @@ import { Ultility } from '../../common/ultility'
 import { InforService } from '../../service/user-account-service'
 import { Common } from '../../utils'
 import Toast from 'react-native-toast-message'
+import { WIDTH } from '../../common/constant'
+import RNPickerSelect from "react-native-picker-select";
 
 const Personal = ({ navigation }: any) => {
     const [isSwitchOn, setIsSwitchOn] = React.useState(false);
@@ -206,6 +208,7 @@ const Personal = ({ navigation }: any) => {
                 <Text style={[styles.text, { textAlign: 'center', fontSize: 20, fontWeight: '700', marginBottom: 16 }]}>Sửa thông tin cá nhân</Text>
                 <Text style={[styles.text, { fontSize: 14, fontWeight: '500' }]}>Họ và tên</Text>
                 <TextInput
+                    theme={{ roundness: 23 }}
                     placeholder='Họ và tên'
                     mode='outlined'
                     style={styles.input}
@@ -214,6 +217,7 @@ const Personal = ({ navigation }: any) => {
                 />
                 <Text style={[styles.text, { fontSize: 14, fontWeight: '500' }]}>Địa chỉ</Text>
                 <TextInput
+                    theme={{ roundness: 23 }}
                     placeholder='Địa chỉ'
                     mode='outlined'
                     style={styles.input}
@@ -221,13 +225,32 @@ const Personal = ({ navigation }: any) => {
                     onChangeText={handleAddressChange}
                 />
                 <Text style={[styles.text, { fontSize: 14, fontWeight: '500' }]}>Ngày sinh</Text>
-                <TextInput
-                    placeholder='Ngày sinh'
-                    mode='outlined'
-                    style={styles.input}
-                    value={userData?.customer?.birth?.toString() ?? ''}
-                    onChangeText={handleBirthChange}
-                />
+                <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
+                    <TextInput
+                        placeholder='Ngày sinh'
+                        mode='outlined'
+                        style={[styles.input, { width: '25%' }]}
+                        value={'14'}
+                        theme={{ roundness: 23 }}
+                        onChangeText={handleBirthChange}
+                    />
+                    <TextInput
+                        placeholder='Tháng sinh'
+                        mode='outlined'
+                        style={[styles.input, { width: '35%' }]}
+                        value={'Tháng 10'}
+                        theme={{ roundness: 23 }}
+                        onChangeText={handleBirthChange}
+                    />
+                    <TextInput
+                        placeholder='Năm sinh'
+                        mode='outlined'
+                        style={[styles.input, { width: '30%' }]}
+                        value={'2000'}
+                        theme={{ roundness: 23 }}
+                        onChangeText={handleBirthChange}
+                    />
+                </View>
                 <View style={[styles.row, { justifyContent: 'space-between', marginTop: 16 }]}>
                     <Button style={{ borderColor: '#FE2083', width: '47%' }} textColor='#FE2083' mode='outlined' onPress={hideModal}>Hủy</Button>
                     <Button style={{ backgroundColor: '#FE2083', width: '47%' }} textColor='#FFF' onPress={() => handleUpdateInfor()}>Lưu</Button>
@@ -239,6 +262,7 @@ const Personal = ({ navigation }: any) => {
                 <TextInput
                     placeholder='Nhập mật khẩu hiện tại'
                     mode='outlined'
+                    theme={{ roundness: 23 }}
                     style={styles.input}
                     secureTextEntry={secureTextEntry}
                     value={currentPassword}
@@ -254,6 +278,7 @@ const Personal = ({ navigation }: any) => {
                 <TextInput
                     placeholder='Nhập mật khẩu mới'
                     mode='outlined'
+                    theme={{ roundness: 23 }}
                     style={styles.input}
                     secureTextEntry={secureTextEntry}
                     value={newPassword}
@@ -269,6 +294,7 @@ const Personal = ({ navigation }: any) => {
                 <TextInput
                     placeholder='Nhập lại mật khẩu mới'
                     mode='outlined'
+                    theme={{ roundness: 23 }}
                     style={styles.input}
                     secureTextEntry={secureTextEntry}
                     value={confirmPassword}
@@ -284,7 +310,6 @@ const Personal = ({ navigation }: any) => {
                     <Button style={{ borderColor: '#FE2083', width: '47%' }} textColor='#FE2083' mode='outlined' onPress={hideChangePasswordModal}>Hủy</Button>
                     <Button style={{ backgroundColor: '#FE2083', width: '47%' }} textColor='#FFF' onPress={() => handleChangePass()}>Lưu</Button>
                 </View>
-
             </Modal>
         </SafeAreaView >
     )
